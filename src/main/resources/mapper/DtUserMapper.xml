@@ -1,0 +1,352 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtUserMapper">
+    <resultMap id="dtUserResult" type="com.ford.qiye.model.DtUser">
+
+        <result column="ID" jdbcType="VARCHAR" property="id" />
+
+        <result column="USERNAME" jdbcType="VARCHAR" property="userName" />
+
+        <result column="PASSWORD" jdbcType="VARCHAR" property="password" />
+
+        <result column="REALNAME" jdbcType="VARCHAR" property="realName" />
+
+        <result column="EMAIL" jdbcType="VARCHAR" property="email" />
+
+        <result column="QQ" jdbcType="VARCHAR" property="qq" />
+
+        <result column="PHONE" jdbcType="VARCHAR" property="phone" />
+
+        <result column="TELEPHONE" jdbcType="VARCHAR" property="telephone" />
+
+        <result column="CREATETIME" jdbcType="TIMESTAMP" property="createTime" />
+
+        <result column="STATUS" jdbcType="DECIMAL" property="status" />
+
+        <result column="PROVINCEID" jdbcType="DECIMAL" property="provinceId" />
+
+        <result column="HEADIMAGE" jdbcType="VARCHAR" property="headImage" />
+
+        <result column="SEX" jdbcType="DECIMAL" property="sex" />
+
+        <result column="BIRTHDAY" jdbcType="DATE" property="birthday" />
+
+        <result column="POSITION" jdbcType="VARCHAR" property="position" />
+
+        <result column="DEPARTID" jdbcType="DECIMAL" property="departId" />
+
+        <result column="DEPARTNAME" jdbcType="VARCHAR" property="departName" />
+
+        <result column="WXNUM" jdbcType="VARCHAR" property="wxNum" />
+
+        <result column="ISAGENCY" jdbcType="VARCHAR" property="isAgency" />
+
+        <result column="AREANAME" jdbcType="VARCHAR" property="areaName" />
+
+        <result column="SMALLNAME" jdbcType="VARCHAR" property="smallName" />
+
+        <result column="AREAID" jdbcType="VARCHAR" property="areaId" />
+
+        <result column="SMALLAREAID" jdbcType="VARCHAR" property="smallAreaId" />
+
+        <result column="SERVECODE" jdbcType="VARCHAR" property="serveCode" />
+
+        <result column="SELLCODE" jdbcType="VARCHAR" property="sellCode" />
+
+        <result column="CREDENTIAL_EXPIRED_DATE" jdbcType="TIMESTAMP" property="credentialExpiredDate" />
+
+    </resultMap>
+
+    <resultMap id="userAuthList" type="com.ford.qiye.model.UserAuthList">
+        <result column="USERNAME" jdbcType="VARCHAR" property="userName"/>
+        <result column="REALNAME" jdbcType="VARCHAR" property="realName"/>
+        <result column="ROLE_NAME" jdbcType="VARCHAR" property="roleName"/>
+        <result column="FUNCTION_NAME" jdbcType="VARCHAR" property="functionName"/>
+        <result column="FUNCTION_NAME" jdbcType="VARCHAR" property="functionName"/>
+        <result column="LINKURL" jdbcType="VARCHAR" property="linkUrl"/>
+        <result column="PRIORITY" jdbcType="VARCHAR" property="priority"/>
+        <result column="REMARK" jdbcType="VARCHAR" property="remark"/>
+    </resultMap>
+
+
+   <select id="findUserAuthPage" resultMap="userAuthList"  parameterType="java.util.Map">
+        SELECT DU.USERNAME,DU.REALNAME,DR.NAME AS ROLE_NAME,DF.NAME FUNCTION_NAME,DF.LINKURL,DF.PRIORITY,DF.REMARK
+        FROM T_DT_USER  DU,  T_DT_ROLE DR,T_DT_FUNCTION DF,T_AS_USERROLE AUR,T_AS_ROLEFUNCTION ARF
+       <where>
+         DU.ID=AUR.USERID
+        AND DR.ID=AUR.ROLEID
+        AND ARF.ROLEID=DR.ID
+        AND ARF.FUNID=DF.ID
+
+           <if test="userName != null and userName != ''">and DU.USERNAME  like '%'||#{userName}||'%'</if>
+           <if test="roleName != null and roleName != ''">and DR.NAME  like '%'||#{roleName}||'%'</if>
+           <if test="functionName != null and functionName != ''">and DF.NAME  like '%'||#{functionName}||'%'</if>
+      </where>
+        ORDER BY DU.USERNAME,DF.PRIORITY
+   </select>
+
+    <select id="findAll" resultMap="dtUserResult">
+        select id,realname from t_dt_user
+    </select>
+
+    <select id="findById" resultMap="dtUserResult">
+           SELECT  ID, USERNAME, PASSWORD, REALNAME, EMAIL, QQ, PHONE, CREATETIME, STATUS,
+        PROVINCEID, HEADIMAGE, SEX, BIRTHDAY, POSITION, DEPARTID, WXNUM, ISAGENCY, AREANAME,
+        SMALLNAME, SERVECODE, SELLCODE  FROM T_DT_USER where ID=#{id}
+    </select>
+
+    <select id="findByWxNum" resultMap="dtUserResult">
+        SELECT   ID, USERNAME, PASSWORD, REALNAME, EMAIL, QQ, PHONE, CREATETIME, STATUS,
+        PROVINCEID, HEADIMAGE, SEX, BIRTHDAY, POSITION, DEPARTID, WXNUM, ISAGENCY, AREANAME,
+        SMALLNAME, SERVECODE, SELLCODE FROM T_DT_USER where WXNUM=#{wxNum}
+    </select>
+
+    <sql id="T_DT_USER_List">
+        ID, USERNAME, PASSWORD, REALNAME, EMAIL, QQ, PHONE, CREATETIME, STATUS,
+        PROVINCEID, HEADIMAGE, SEX, BIRTHDAY, POSITION, DEPARTID, WXNUM, ISAGENCY, AREANAME,
+        SMALLNAME, SERVECODE, SELLCODE,CREDENTIAL_EXPIRED_DATE
+    </sql>
+    <insert id="insertDealer"  parameterType="java.util.Map">
+        <selectKey resultType="java.lang.Long"  order="BEFORE" keyProperty="id">
+            SELECT SEQ_T_DT_USER.Nextval as ID from DUAL
+        </selectKey>
+        insert into T_DT_USER(ID,USERNAME, REALNAME,EMAIL,PHONE, HEADIMAGE,SEX,POSITION,WXNUM,AREANAME,
+                              SMALLNAME,SERVECODE,SELLCODE,STATUS,ISAGENCY,CREATETIME)
+        values(#{id,jdbcType=VARCHAR},
+              #{userName,jdbcType=VARCHAR},
+              #{realName,jdbcType=VARCHAR},
+              #{email,jdbcType=VARCHAR},
+              #{phone,jdbcType=VARCHAR},
+              #{headImage,jdbcType=VARCHAR},
+              #{sex,jdbcType=VARCHAR},
+              #{position,jdbcType=VARCHAR},
+              #{wxNum,jdbcType=VARCHAR},
+              #{areaName,jdbcType=VARCHAR},
+              #{smallName,jdbcType=VARCHAR},
+              #{serveCode,jdbcType=VARCHAR},
+              #{sellCode,jdbcType=VARCHAR},
+              #{status,jdbcType=DECIMAL},
+              #{isAgency,jdbcType=VARCHAR},
+              sysdate
+        )
+    </insert>
+
+    <insert id="insertEmployee"  parameterType="java.util.Map">
+        <selectKey resultType="java.lang.Long"  order="BEFORE" keyProperty="id">
+            SELECT SEQ_T_DT_USER.Nextval as ID from DUAL
+        </selectKey>
+        insert into T_DT_USER(ID,USERNAME, REALNAME,EMAIL,PHONE, HEADIMAGE,SEX,POSITION,WXNUM,
+                    STATUS,CREATETIME,
+                    PASSWORD,
+                    DEPARTID,
+                    CREDENTIAL_EXPIRED_DATE,ISAGENCY
+                    )
+        values(#{id,jdbcType=VARCHAR},
+              #{userName,jdbcType=VARCHAR},
+              #{realName,jdbcType=VARCHAR},
+              #{email,jdbcType=VARCHAR},
+              #{phone,jdbcType=VARCHAR},
+              #{headImage,jdbcType=VARCHAR},
+              #{sex,jdbcType=VARCHAR},
+              #{position,jdbcType=VARCHAR},
+              #{wxNum,jdbcType=VARCHAR},
+              #{status,jdbcType=DECIMAL},
+              sysdate,
+              #{password,jdbcType=VARCHAR},
+              #{departId,jdbcType=DECIMAL},
+              #{credentialExpiredDate,jdbcType=TIMESTAMP},0
+        )
+    </insert>
+    <update id="updateDealer" parameterType="java.util.Map">
+        update T_DT_USER set
+        <if test="userName!=null and userName != ''">USERNAME=#{userName}</if>
+        <if test="realName!=null and realName != ''">,REALNAME=#{realName}</if>
+        <if test="sex!=null and sex != ''">,SEX=#{sex}</if>
+        <if test="position!=null and position != ''">,POSITION=#{position}</if>
+        <if test="email!=null and email != ''">,EMAIL=#{email}</if>
+        <if test="phone!=null and phone != ''">,PHONE=#{phone}</if>
+        <if test="wxNum!=null and wxNum != ''">,WXNUM=#{wxNum}</if>
+        <if test="areaName!=null and areaName != ''">,AREANAME=#{areaName}</if>
+        <if test="smallName!=null and smallName != ''">,SMALLNAME=#{smallName}</if>
+        <if test="serveCode!=null and serveCode != ''">,SERVECODE=#{serveCode}</if>
+        <if test="sellCode!=null and sellCode != ''">,SELLCODE=#{sellCode}</if>
+        <if test="headImage!=null and headImage != ''">,HEADIMAGE=#{headImage}</if>
+        <if test="password!=null and password != ''">,PASSWORD=#{password}</if>
+        <if test="departId!=null and departId != ''">,DEPARTID=#{departId}</if>
+        <where> ID=#{id} </where>
+    </update>
+
+    <update id="updateUser" parameterType="java.util.Map">
+        update T_DT_USER set
+        <if test="userName!=null and userName != ''">USERNAME=#{userName}</if>
+        <if test="realName!=null and realName != ''">,REALNAME=#{realName}</if>
+        <if test="sex!=null and sex != ''">,SEX=#{sex}</if>
+        <if test="position!=null and position != ''">,POSITION=#{position}</if>
+        <if test="email!=null and email != ''">,EMAIL=#{email}</if>
+        <if test="phone!=null and phone != ''">,PHONE=#{phone}</if>
+        <if test="wxNum!=null and wxNum != ''">,WXNUM=#{wxNum}</if>
+        <if test="areaName!=null and areaName != ''">,AREANAME=#{areaName}</if>
+        <if test="smallName!=null and smallName != ''">,SMALLNAME=#{smallName}</if>
+        <if test="serveCode!=null and serveCode != ''">,SERVECODE=#{serveCode}</if>
+        <if test="sellCode!=null and sellCode != ''">,SELLCODE=#{sellCode}</if>
+        <if test="headImage!=null and headImage != ''">,HEADIMAGE=#{headImage}</if>
+        <if test="password!=null and password != ''">,PASSWORD=#{password}</if>
+        <if test="departId!=null and departId != ''">,DEPARTID=#{departId}</if>
+        <if test="credentialExpiredDate!=null">,CREDENTIAL_EXPIRED_DATE=#{credentialExpiredDate}</if>
+        <where> ID=#{id} </where>
+    </update>
+
+    <update id="deleteById"  parameterType="java.util.Map">
+        DELETE  FROM  T_DT_USER  where ID=#{id}
+    </update>
+
+    <update id="updateOpenIdById"  parameterType="java.util.Map">
+           update T_DT_USER set  ID=#{openId}  where ID=#{id}
+    </update>
+
+
+    <select id="updatePassword" parameterType="java.util.Map">
+        update T_DT_USER TDU set TDU.PASSWORD=#{password},CREDENTIAL_EXPIRED_DATE=#{credentialExpiredDate,jdbcType=TIMESTAMP} WHERE TDU.ID=#{id}
+    </select>
+
+    <select id="findByPage" resultMap="dtUserResult" parameterType="java.util.Map">
+        SELECT TDU.ID,TDU.USERNAME,TDU.REALNAME,TDU.POSITION,TDU.PHONE,
+        TDU.EMAIL,TDU.DEPARTID,TDD.DEPARTNAME,TDU.HEADIMAGE,TDU.SEX,TDU.WXNUM,TDU.ISAGENCY,
+        TDA.NAME AS AREANAME,
+        TDA1.NAME AS SMALLNAME,
+        TDU.SERVECODE,
+        TDU.SELLCODE,
+        TDU.AREANAME AS AREAID,
+        TDU.SMALLNAME AS SMALLAREAID
+        FROM T_DT_USER TDU
+        LEFT JOIN T_DT_DEPART TDD ON TDU.DEPARTID=TDD.DEPARTID
+        LEFT JOIN T_DT_AREA TDA ON TDU.AREANAME=TDA.ID
+        LEFT JOIN T_DT_AREA TDA1 ON TDU.SMALLNAME=TDA1.ID
+        <where>
+            <if test="realName != null and realName != ''">and tdu.realName  like '%'||#{realName}||'%'</if>
+            <if test="userName != null and userName != ''">and tdu.userName  like '%'||#{userName}||'%'</if>
+            <if test="position != null and position != ''">and tdu.position  like '%'||#{position}||'%'</if>
+            <if test="email != null and email != ''">and tdu.email  like '%'||#{email}||'%'</if>
+            <if test="phone != null and phone != ''">and tdu.phone  like '%'||#{phone}||'%'</if>
+            <if test="departId !=null and departId !=''">and tdu.departid=#{departId}</if>
+            <if test="isAgency!=null and isAgency!= ''">and tdu.isagency=#{isAgency}</if>
+            <if test="serveCode!=null and serveCode!= ''">and tdu.servecode like '%'||#{serveCode}||'%'</if>
+            <if test="sellCode!=null and sellCode!= ''">and tdu.sellcode  like '%'||#{sellCode}||'%'</if>
+        </where>
+    </select>
+
+    <select id="queryUsersByUserName" parameterType="java.lang.String" resultMap="dtUserResult">
+        select
+        <include refid="T_DT_USER_List" />
+        from T_DT_USER WHERE  USERNAME=#{userName}
+    </select>
+
+
+    <select id="findUserByDepartId" parameterType="java.util.Map" resultMap="dtUserResult">
+        select tdu.* from t_dt_user tdu
+        left join t_dt_depart tdd on tdu.departid=tdd.departid
+        left join t_as_usermark tau on tdu.id=tau.userid
+        left join t_dt_mark tdm on  tau.markid=tdm.markid
+        <where>
+            <if test="departId !=null and departId != ''">and tdd.departid=#{departId}</if>
+            <if test="position !=null and position != ''">and tdu.position=#{position}</if>
+            <if test="areaName !=null and areaName != ''">and tdu.areaname=#{areaName}</if>
+            <if test="smallName !=null and smallName != ''">and tdu.smallname=#{smallName}</if>
+            <if test="serveCode !=null and serveCode != ''">and tdu.servecode=#{serveCode}</if>
+            <if test="sellCode !=null and sellCode != ''">and tdu.sellcode=#{sellCode}</if>
+            <if test="markId !=null and markId != ''">and tau.markid=#{markId}</if>
+        </where>
+    </select>
+
+
+    <select id="findMaterialByUser" parameterType="java.util.Map" resultMap="dtUserResult">
+        SELECT TDU.ID,TDU.USERNAME,TDU.REALNAME,TDU.POSITION,TDU.PHONE,TDU.EMAIL,TDU.DEPARTID,TDD.DEPARTNAME,TDU.HEADIMAGE,TDU.SEX,TDU.WXNUM,TDU.ISAGENCY,
+        TDU.AREANAME,TDU.SMALLNAME,TDU.SERVECODE,TDU.SELLCODE,TAM.CREATETIME
+        FROM T_DT_USER TDU
+        LEFT JOIN T_DT_DEPART TDD ON TDU.DEPARTID=TDD.DEPARTID
+        LEFT JOIN T_AS_MATERUSER TAM ON TDU.ID=TAM.USERID
+        LEFT JOIN T_DT_MATERIAL TDM ON TAM.MATERID=TDM.MATERIALID
+        <where>
+            <if test="null!=realName and ''!=realName">and tdu.realname like '%'||#{realName}||'%'</if>
+            <if test="null!=startDate and ''!=startDate"> and tam.createtime &gt;= #{startDate} </if>
+            <if test="null!=endDate and ''!=endDate"> and tam.createtime &lt;= #{endDate} </if>
+            <if test="areaName != null and areaName !=''">and tdu.areaname=#{areaName}</if>
+            <if test="smallName != null and smallName !=''">and tdu.smallname=#{smallName}</if>
+            <if test="serveCode != null and serveCode !=''">and tdu.servecode=#{serveCode}</if>
+            <if test="sellCode != null and sellCode !=''">and tdu.sellcode=#{sellCode}</if>
+            <if test="materialId != null and materialId !=''">and tam.materid=#{materialId}</if>
+            <if test="position != null and position != ''"> and tdu.position=#{position}</if>
+            <if test="isDownload != null and isDownload != ''"> and tam.isdownload=#{isDownload}</if>
+        </where>
+        order by tam.materuserid desc
+    </select>
+    <select id="findUserByMaterialId" parameterType="java.util.Map" resultMap="dtUserResult">
+        SELECT TDU.ID,TDU.USERNAME,TDU.REALNAME,TDU.POSITION,TDU.PHONE,TDU.EMAIL,TDU.DEPARTID,TDD.DEPARTNAME,TDU.HEADIMAGE,TDU.SEX,TDU.WXNUM,TDU.ISAGENCY,
+        TDU.AREANAME,TDU.SMALLNAME,TDU.SERVECODE,TDU.SELLCODE,TAM.CREATETIME
+        FROM T_DT_USER TDU
+        LEFT JOIN T_DT_DEPART TDD ON TDU.DEPARTID=TDD.DEPARTID
+        LEFT JOIN T_AS_MATERUSER TAM ON TDU.ID=TAM.USERID
+        LEFT JOIN T_DT_MATERIAL TDM ON TAM.MATERID=TDM.MATERIALID
+        <where>
+            <if test="null!=realName and ''!=realName">and tdu.realname like '%'||#{realName}||'%'</if>
+            <if test="null!=startDate and ''!=startDate"> and tam.createtime &gt;= #{startDate} </if>
+            <if test="null!=endDate and ''!=endDate"> and tam.createtime &lt;= #{endDate} </if>
+            <if test="areaName != null and areaName !=''">and tdu.areaname=#{areaName}</if>
+            <if test="smallName != null and smallName !=''">and tdu.smallname=#{smallName}</if>
+            <if test="serveCode != null and serveCode !=''">and tdu.servecode=#{serveCode}</if>
+            <if test="sellCode != null and sellCode !=''">and tdu.sellcode=#{sellCode}</if>
+            <if test="materialId != null and materialId !=''">and tam.materid=#{materialId}</if>
+            <if test="position != null and position != ''"> and tdu.position=#{position}</if>
+            <if test="isAgency != null and isAgency != ''">and tdu.isagency=#{isAgency}</if>
+            <if test="isDownload != null and isDownload != ''"> and tam.isdownload=#{isDownload}</if>
+        </where>
+        order  by tdu.id desc
+    </select>
+
+    <select id="findMaterial"  resultMap="dtUserResult" parameterType="java.util.Map">
+        select tdu.id,tdu.username,tdu.realname,tdu.position,tdu.phone,tdu.email,tdu.departid,tdd.DEPARTNAME,tdu.headimage,tdu.sex,tdu.wxnum,tdu.isagency,
+        tdu.areaname,tdu.smallname,tdu.servecode,tdu.sellcode,tam.createtime
+        from t_dt_user tdu
+        left join t_dt_depart tdd on tdu.departid=tdd.departid
+        left join t_as_materuser tam on tdu.id=tam.userid
+        left join t_dt_material tdm on tam.materid=tdm.materialid
+        <where>
+            <if test="null!=realName and ''!=realName">and tdu.realname like '%'||#{realName}||'%'</if>
+            <if test="null!=startDate and ''!=startDate"> and tam.createtime &gt;= #{startDate} </if>
+            <if test="null!=endDate and ''!=endDate"> and tam.createtime &lt;= #{endDate} </if>
+            <if test="areaName != null and areaName !=''">and tdu.areaname=#{areaName}</if>
+            <if test="smallName != null and smallName !=''">and tdu.smallname=#{smallName}</if>
+            <if test="serveCode != null and serveCode !=''">and tdu.servecode=#{serveCode}</if>
+            <if test="sellCode != null and sellCode !=''">and tdu.sellcode=#{sellCode}</if>
+            <if test="materialId != null and materialId !=''">and tam.materid=#{materialId}</if>
+            <if test="position != null and position != ''"> and tdu.position=#{position}</if>
+            <if test="isDownload != null and isDownload != ''"> and tam.isdownload=#{isDownload}</if>
+        </where>
+        order by tam.materuserid desc
+    </select>
+
+    <select id="findAllObjectMap" resultType="java.util.Map" parameterType="java.util.Map">
+        SELECT TDU.ID,TDU.USERNAME,TDU.REALNAME,TDU.POSITION,TDU.PHONE,
+        TDU.EMAIL,TDU.DEPARTID,TDD.DEPARTNAME,TDU.HEADIMAGE,TDU.SEX,TDU.WXNUM,TDU.ISAGENCY,
+        TDA.NAME AS AREANAME,
+        TDA1.NAME AS SMALLNAME,
+        TDU.SERVECODE,
+        TDU.SELLCODE,
+        TDU.AREANAME AS AREAID,
+        TDU.SMALLNAME AS SMALLAREAID
+        FROM T_DT_USER TDU
+        LEFT JOIN T_DT_DEPART TDD ON TDU.DEPARTID=TDD.DEPARTID
+        LEFT JOIN T_DT_AREA TDA ON TDU.AREANAME=TDA.ID
+        LEFT JOIN T_DT_AREA TDA1 ON TDU.SMALLNAME=TDA1.ID
+        <where>
+            <if test="realName != null and realName != ''">and tdu.realName  like '%'||#{realName}||'%'</if>
+            <if test="userName != null and userName != ''">and tdu.userName  like '%'||#{userName}||'%'</if>
+            <if test="position != null and position != ''">and tdu.position  like '%'||#{position}||'%'</if>
+            <if test="email != null and email != ''">and tdu.email  like '%'||#{email}||'%'</if>
+            <if test="phone != null and phone != ''">and tdu.phone  like '%'||#{phone}||'%'</if>
+            <if test="departId !=null and departId !=''">and tdu.departid=#{departId}</if>
+            <if test="isAgency!=null and isAgency!= ''">and tdu.isagency=#{isAgency}</if>
+            <if test="serveCode!=null and serveCode!= ''">and tdu.servecode like '%'||#{serveCode}||'%'</if>
+            <if test="sellCode!=null and sellCode!= ''">and tdu.sellcode  like '%'||#{sellCode}||'%'</if>
+        </where>
+    </select>
+</mapper>

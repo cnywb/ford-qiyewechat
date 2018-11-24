@@ -1,0 +1,18 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtParameterMapper">
+
+    <resultMap type="com.ford.qiye.model.DtParameter" id="dtParameterResultMap">
+        <result column="ID"        property="id" />
+        <result column="CATEGORY"  property="category" />
+        <result column="NAME"      property="name" />
+        <result column="P_KEY"     property="key" />
+        <result column="P_VALUE"   property="value" />
+    </resultMap>
+
+    <select id="getValueForKey" parameterType="java.lang.String" resultMap="dtParameterResultMap">
+        select * from  t_dt_sys_parameter where P_KEY=#{key}
+    </select>
+    <update id="updateValueByKey" parameterType="java.util.Map" >
+        update t_dt_sys_parameter set P_VALUE=#{value}  where P_KEY=#{key}
+    </update>
+</mapper>

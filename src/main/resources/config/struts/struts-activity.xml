@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.url.includeParams" value="none" />
+	<package name="activity" namespace="/backer" extends="app-default">
+		<action name="activity" class="activityBean">
+			<result name="findActivityList">
+				/pages/activity/test.jsp
+			</result>
+			<result name="getopenid" type="redirect">
+				https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&amp;redirect_uri=${reurl}&amp;response_type=code&amp;scope=snsapi_base&amp;state=123#wechat_redirect
+			</result>
+			<result name="openidsuccess">
+				/pages/activity/openidsuccess.jsp
+			</result>
+		</action>
+	</package>
+</struts>
+
+

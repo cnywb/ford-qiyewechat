@@ -1,0 +1,28 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtFunctionMapper">
+
+    <resultMap type="com.ford.qiye.model.DtFunction" id="dtFunctionResultMap">
+        <result column="ID" jdbcType="DECIMAL" property="id" />
+        <result column="PARENTID" jdbcType="DECIMAL" property="parentId" />
+        <result column="NAME" jdbcType="VARCHAR" property="name" />
+        <result column="LINKURL" jdbcType="VARCHAR" property="linkUrl" />
+        <result column="PRJID" jdbcType="DECIMAL" property="prjId" />
+        <result column="STATUS" jdbcType="DECIMAL" property="status" />
+        <result column="PRIORITY" jdbcType="DECIMAL" property="priority" />
+        <result column="CREATETIME" jdbcType="DATE" property="createTime" />
+        <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    </resultMap>
+
+    <sql id="T_DT_FUNCTION_LIST">
+        ID, PARENTID, NAME, LINKURL, PRJID, STATUS, PRIORITY, CREATETIME, REMARK
+    </sql>
+
+    <select id="queryMenuByUserId" parameterType="java.lang.String" resultMap="dtFunctionResultMap">
+      select dft.* from t_dt_function  dft,T_AS_ROLEFUNCTION asf ,T_AS_USERROLE asu
+      where asf.ROLEID=asu.ROLEID and asf.FUNID=dft.ID and asu.USERID=#{userId} order by dft.PARENTID,dft.PRIORITY
+    </select>
+
+    <select id="queryAll"   resultMap="dtFunctionResultMap">
+       SELECT * FROM T_DT_FUNCTION
+    </select>
+</mapper>

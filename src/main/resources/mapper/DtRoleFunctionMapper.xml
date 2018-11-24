@@ -1,0 +1,24 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtRoleFunctionMapper">
+
+    <resultMap type="com.ford.qiye.model.DtRoleFunction" id="dtRoleResultMap">
+        <result column="ROLEID"  jdbcType="DECIMAL" property="roleId" />
+        <result column="FUNID"  jdbcType="DECIMAL" property="functionId" />
+        <result column="CREATETIME" jdbcType="DATE" property="createTime" />
+    </resultMap>
+
+
+    <delete id="deleteByRoleId" parameterType="java.util.Map">
+        DELETE FROM T_AS_ROLEFUNCTION
+        <where>
+            <if test="null!=roleId and ''!=roleId"> and ROLEID=#{roleId} </if>
+        </where>
+    </delete>
+
+    <insert id="insert" parameterType="java.util.List">
+        INSERT INTO T_AS_ROLEFUNCTION(ROLEID,FUNID)
+        <foreach collection="roles" item="item" index="index" separator="union " open="("  close=")">
+            select #{item.roleId},#{item.functionId} from dual
+        </foreach>
+    </insert>
+</mapper>

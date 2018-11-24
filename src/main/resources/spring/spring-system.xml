@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+
+	<bean id="systemBean" class="com.fute.backer.action.SystemAction"
+		scope="prototype">
+		<property name="systemService" ref="systemService" />
+		<property name="basicService" ref="basicService" />
+	</bean>
+
+	<bean id="systemService" class="com.fute.backer.service.SystemServiceImp"
+		scope="prototype">
+		<property name="systemMapper" ref="systemMapper" />
+		<property name="basicService" ref="basicService" />
+	</bean>
+
+	<bean id="systemMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.fute.backer.dao.SystemMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	
+	<bean id="areaMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.fute.backer.dao.AreaMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	
+	<bean id="systemParameter" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.fute.backer.dao.SystemParameterMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+
+
+</beans>

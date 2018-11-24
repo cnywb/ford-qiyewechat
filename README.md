@@ -1,0 +1,1 @@
+-Dprofiles.activation=development

@@ -1,0 +1,309 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.url.includeParams" value="none" />
+
+
+	<package name="battery" namespace="/" extends="app-default">
+
+		<action name="wxset" class="weiXinSetAction">
+			<result name="dtImgTextList">
+				/pages/weixin/dtImgTextList.jsp
+			</result>
+			<result name="dtImgList">
+				/pages/weixin/dtImgList.jsp
+			</result>
+			<result name="dtImgTextSingle">
+				/pages/weixin/dtImgTextSingle.jsp
+			</result>
+			<result name="dtImgTextMulti">
+				/pages/weixin/dtImgTextMulti.jsp
+			</result>
+			<result name="showDTImgText">
+				/pages/weixin/showDTImgText.jsp
+			</result>
+			<result name="noticeSend">
+				/pages/weixin/noticeSend.jsp
+			</result>
+			<result name="noticeSendHistory">
+				/pages/weixin/noticeSendHistory.jsp
+			</result>
+		</action>
+
+		<action name="integral" class="integralBean">
+			<result name="getopenid" type="redirect">
+				https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&amp;redirect_uri=${reurl}&amp;response_type=code&amp;scope=snsapi_base&amp;state=123#wechat_redirect
+			</result>
+			<result name="batteryview">
+				/pages/battery/batteryview.jsp
+			</result>
+		</action>
+		<action name="statis" class="statisBean">
+			<result name="statis">
+				/pages/statis/statis.jsp
+			</result>
+			<result name="inteGainMemberList">
+				/pages/statis/inteGainMemberList.jsp
+			</result>
+		</action>
+		<action name="battery" class="batteryBean">
+			<!-- 学科 -->
+			<result name="getopenid" type="redirect">
+				https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&amp;redirect_uri=${reurl}&amp;response_type=code&amp;scope=snsapi_base&amp;state=${state}#wechat_redirect
+			</result>
+			<result name="batteryview">
+				/pages/battery/batteryview.jsp
+			</result>
+			<result name="batteryviewdefault">
+				/pages/battery/batteryviewdefault.jsp
+			</result>
+			<result name="member">
+				/pages/battery/member.jsp
+			</result>
+			<result name="mlBanner">
+				/pages/battery/mlBanner.jsp
+			</result>
+			<result name="battHistory">
+				/pages/battery/battHistory.jsp
+			</result>
+			<result name="showImg">
+				/pages/battery/showImg.jsp
+			</result>
+			<result name="textKey">
+				/pages/battery/textKey.jsp
+			</result>
+			<result name="nickNameSuccess">
+				/pages/battery/nickNameSuccess.jsp
+			</result>
+			<result name="saveMember">
+				/pages/battery/saveMember.jsp
+			</result>
+			<result name="saveMemberSuccess">
+				/pages/battery/saveMemberSuccess.jsp
+			</result>
+			<result name="cityListJson" type="json">
+				<param name="root">result</param>
+			</result>
+			<result name="dataJson" type="json">
+				<param name="root">result</param>
+			</result>
+			<result name="helloMessage">
+				/pages/battery/helloMessage.jsp
+			</result>
+			<result name="messageList">
+				/pages/battery/messageList.jsp
+			</result>
+			<result name="interactionList">
+				/pages/battery/interactionList.jsp
+			</result>
+			<result name="interactionRecord">
+				/pages/battery/interactionRecord.jsp
+			</result>
+			<result name="memberMarkList">
+				/pages/battery/memberMarkList.jsp
+			</result>
+			<result name="noFocusOn">
+				/pages/battery/noFocusOn.jsp
+			</result>
+			<result name="backurl">
+				/pages/battery/backurl.jsp
+			</result>
+		</action>
+
+		<action name="wechat" class="batteryBean">
+			<result name="daningyes">
+				/pages/activity/daningyes.jsp
+			</result>
+			<result name="daningno">
+				/pages/activity/daningno.jsp
+			</result>
+			<result name="getopenid" type="redirect">
+				https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&amp;redirect_uri=${reurl}&amp;response_type=code&amp;scope=snsapi_base&amp;state=123#wechat_redirect
+			</result>
+			<result name="daningsuccess">
+				/pages/activity/daningsuccess.jsp
+			</result>
+			<result name="shenyeyes">
+				/pages/activity/shenyeyes.jsp
+			</result>
+			<result name="shenyeno">
+				/pages/activity/shenyeno.jsp
+			</result>
+			<result name="shenyesuccess">
+				/pages/activity/shenyesuccess.jsp
+			</result>
+			<result name="shenyelist">
+				/pages/activity/shenyelist.jsp
+			</result>
+			<result name="cdyes">
+				/pages/activity/cdyes.jsp
+			</result>
+			<result name="cdno">
+				/pages/activity/cdno.jsp
+			</result>
+			<result name="cdfinish">
+				/pages/activity/cdfinish.jsp
+			</result>
+			<result name="cdsuccess">
+				/pages/activity/cdsuccess.jsp
+			</result>
+		</action>
+
+		<!-- 活动 -->
+		<action name="hd" class="hdBean">
+			<result name="showImg">
+				/pages/battery/showImg.jsp
+			</result>
+			<result name="showImg2">
+				/pages/hd/showImg2.jsp
+			</result>
+			<result name="hdInfoList">
+				/pages/hd/hdInfoList.jsp
+			</result>
+			<result name="hdtypeList">
+				/pages/hd/hdtypeList.jsp
+			</result>
+			<result name="hdAwardList">
+				/pages/hd/hdAwardList.jsp
+			</result>
+			<result name="hdResultList">
+				/pages/hd/hdResultList.jsp
+			</result>
+			<result name="guaguakaNoBegin">
+				/pages/hd/guaguakaNoBegin.jsp
+			</result>
+			<result name="guaguakaNoFocuson">
+				/pages/hd/guaguakaNoFocuson.jsp
+			</result>
+			<result name="guaguakaHasEnd">
+				/pages/hd/guaguakaHasEnd.jsp
+			</result>
+			<result name="guaguakaHasSuccess">
+				/pages/hd/guaguakaHasSuccess.jsp
+			</result>
+			<result name="guaguakaHasFail">
+				/pages/hd/guaguakaHasFail.jsp
+			</result>
+			<result name="showGuaGuaKa">
+				/pages/hd/showGuaGuaKa.jsp
+			</result>
+			<result name="dataJson" type="json">
+				<param name="root">result</param>
+			</result>
+			<result name="getopenid" type="redirect">
+				https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&amp;redirect_uri=${reurl}&amp;response_type=code&amp;scope=snsapi_base&amp;state=${state}#wechat_redirect
+			</result>
+		</action>
+
+		<!-- 积分 -->
+		<action name="inte" class="inteBean">
+			<result name="inteCouponList">
+				/pages/inte/inteCouponList.jsp
+			</result>
+			<result name="inteActivationList">
+				/pages/inte/inteActivationList.jsp
+			</result>
+			<result name="inteGainList">
+				/pages/inte/inteGainList.jsp
+			</result>
+			<result name="inteSourceList">
+				/pages/inte/inteSourceList.jsp
+			</result>
+			<result name="inteProductList">
+				/pages/inte/inteProductList.jsp
+			</result>
+			<result name="inteRecord">
+				/pages/inte/inteRecord.jsp
+			</result>
+			<result name="inteShop">
+				/pages/inte/inteShop.jsp
+			</result>
+			<result name="showInteChange">
+				/pages/inte/showInteChange.jsp
+			</result>
+			<result name="inteChangeList">
+				/pages/inte/inteChangeList.jsp
+			</result>
+			<result name="inteScan">
+				/pages/inte/inteScan.jsp
+			</result>
+			<result name="dataJson" type="json">
+				<param name="root">result</param>
+			</result>
+			<result name="inteRecordJson" type="json">
+				<param name="root">result</param>
+			</result>
+			<result name="inteShopCar">
+				/pages/inte/inteShopCar.jsp
+			</result>
+			<result name="byCarList">
+				/pages/inte/byCarList.jsp
+			</result>
+			<result name="inteByCarList">
+				/pages/inte/inteByCarList.jsp
+			</result>
+			<result name="getopenid" type="redirect">
+				https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&amp;redirect_uri=${reurl}&amp;response_type=code&amp;scope=snsapi_base&amp;state=${state}#wechat_redirect
+			</result>
+		</action>
+
+	</package>
+
+
+
+	<package name="game" namespace="/game" extends="app-default">
+
+		<action name="game" class="gameAction">
+			<result name="getopenid" type="redirect">
+				https://open.weixin.qq.com/connect/oauth2/authorize?appid=${appid}&amp;redirect_uri=${reurl}&amp;response_type=code&amp;scope=snsapi_base&amp;state=${state}#wechat_redirect
+			</result>
+			<result name="findGameList">
+				/pages/game/gameList.jsp
+			</result>
+			<result name="gameOrderList">
+				/pages/game/gameOrderList.jsp
+			</result>
+			<result name="leaderboards">
+				/pages/gameweixin/index.jsp
+			</result>
+			<result name="weixinGameOrder">
+				/pages/gameweixin/weixinGameOrder.jsp
+			</result>
+
+
+			<result name="noFans">
+				/pages/gameweixin/ma.jsp
+			</result>
+			<result name="validateError">
+				/pages/gameweixin/validateError.jsp
+			</result>
+			<result name="error">
+				/error.jsp
+			</result>
+		</action>
+
+	</package>
+	
+	
+	<package name="st" namespace="/st" extends="app-default">
+
+		<action name="st" class="stAction">
+			<result name="ispList">
+				/pages/st/ispList.jsp
+			</result>
+			<result name="versionList">
+				/pages/st/versionList.jsp
+			</result>
+			<result name="platList">
+				/pages/st/platList.jsp
+			</result>
+			<result name="hdcityList">
+				/pages/st/hdcityList.jsp
+			</result>
+		</action>
+
+	</package>
+</struts>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+
+	<package name="app-default" extends="json-default,struts-default">
+		<interceptors>
+			<interceptor name="logInterceptor" class="com.fute.common.log.LogInterceptor">
+					<param name="includeMethods">add1*,modify1*,update1*,insert1*,create1*,edit1*,delete1*,check1*</param>
+			</interceptor>
+			<interceptor-stack name="appStack">
+				<interceptor-ref name="fileUploadStack">
+					<param name="allowedTypes">
+						image/bmp,image/png,image/gif,image/jpeg,image/jpg
+					</param>
+				</interceptor-ref>
+				<interceptor-ref name="logInterceptor" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="appStack" />
+		<global-results>
+			<result name="toLogin" type="redirect">/index.jsp</result>
+			<result name="error">/index.jsp</result>
+			<result name="returnJson" type="json">
+				<param name="root">result</param>
+			</result>
+		</global-results>
+	</package>
+
+	<package name="manage-default" extends="app-default">
+		<interceptors>
+			<interceptor name="userLogin"
+				class="com.fute.common.action.LoginInterceptor" />
+			<interceptor-stack name="userStack">
+				<interceptor-ref name="userLogin" />
+				<interceptor-ref name="appStack" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="userStack" />
+	</package>
+
+	<package name="funManage-default" extends="manage-default">
+		<interceptors>
+			<interceptor name="funLogin"
+				class="com.fute.common.action.FunInterceptor" />
+			<interceptor-stack name="funStack">
+				<interceptor-ref name="funLogin" />
+				<interceptor-ref name="userLogin" />
+				<interceptor-ref name="appStack" />
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="funStack" />
+	</package>
+
+</struts>

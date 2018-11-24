@@ -1,0 +1,425 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fute.backer.dao.SystemMapper">
+
+	
+   <resultMap type="com.fute.backer.model.Question" id="question">
+    <id column="QUID" property="id"/>
+    <result column="DEPTID" property="departmentId"/>
+    <result column="QUCONTENT" property="content"/>
+    <result column="QUIZID" property="userId"/>
+    <result column="QUIZTIME" property="createTime"/>
+    <result column="STATUS" property="status"/>
+  </resultMap>
+  
+  <resultMap type="com.fute.backer.model.Answer" id="answer">
+    <id column="ANID" property="id"/>
+    <result column="QUID" property="questionId"/>
+    <result column="ANSWERCONTENT" property="content"/>
+    <result column="ANSWERID" property="userId"/>
+    <result column="ANSWERTIME" property="createTime"/>
+  </resultMap>
+  
+
+    
+	<select id="getUserInfo"  parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT TDU.ID AS USERID,TDU.USERNAME,TDU.REALNAME,TDU.HEADIMAGE,TDU.DEPARTID,TDU.WXNUM,TDU.ISAGENCY,TDR.ID AS ROLEID,TDR.NAME AS ROLENAME,TDU.DEPARTID
+		FROM T_DT_USER TDU
+		LEFT JOIN T_AS_USERROLE TAU ON TDU.ID=TAU.USERID
+		LEFT JOIN T_DT_ROLE TDR ON TAU.ROLEID=TDR.ID
+		WHERE TDU.USERNAME=#{username} AND  TDU.PASSWORD=#{password}
+	</select>
+	<select id="getUserInfoById"  parameterType="java.util.Map" resultType="java.util.Map">
+		select tdu.id as userid,tdu.username,tdu.realname,tdu.headimage,tdu.departid,tdu.wxnum,tdu.isagency,tdr.id as roleid,tdr.name as rolename,tdu.departid
+		from t_dt_user tdu 
+		left join t_as_userrole tau on tdu.id=tau.userId
+		left join t_dt_role tdr on tau.roleId=tdr.id
+		where tdu.id=#{id}
+	</select>
+	<select id="getUserInfoByWechatId"  parameterType="java.util.Map" resultType="java.util.Map">
+		select tdu.id as userid,tdu.username,tdu.realname,tdu.headimage,tdu.departid,tdu.wxnum,tdu.isagency,tdr.id as roleid,tdr.name as rolename,tdu.departid
+		from t_dt_user tdu 
+		left join t_as_userrole tau on tdu.id=tau.userId
+		left join t_dt_role tdr on tau.roleId=tdr.id
+		where tdu.wxnum=#{wechatId}
+	</select>
+	<select id="getMenuList" parameterType="java.util.Map" resultType="java.util.Map">
+	SELECT ID,PARENTID,NAME,LINKURL,STATUS,PRIORITY,CREATETIME,REMARK,PRJID
+	FROM T_DT_FUNCTION WHERE ID IN(SELECT FUNID FROM T_AS_ROLEFUNCTION WHERE ROLEID IN(SELECT ROLEID FROM T_AS_USERROLE WHERE USERID=#{USERID}))
+	</select>
+	<insert id="insertRole" parameterType="java.util.Map">
+		insert into t_dt_role(name,status,remark)
+		values(#{name},#{status},#{remark})
+	</insert>
+	<delete id="deleteRole" parameterType="java.util.Map">
+		delete from t_dt_role where id =#{id}
+	</delete>
+	<select id="getRoleList" parameterType="java.util.Map"  resultType="java.util.Map">
+		select r.id,r.name,r.status,r.remark ,GROUP_CONCAT(distinct CAST(f.id  AS char(10))) funIds
+		from  t_dt_role r
+		left join t_as_rolefunction rf on r.id=rf.roleId
+		left join t_dt_function f on rf.funId=f.id
+		<where> 1=1 
+			<if test="null!=name and ''!=name"> and r.name like "%"#{name}"%" </if>
+			<if test="null!=status and ''!=status"> and r.status=#{status}</if>
+			<if test="null!=remark and ''!=remark"> and r.remark like "%"#{remark}"%" </if>
+		</where>
+		GROUP BY r.id 
+		order by r.id desc
+	</select>
+	<select id="getFunctionListAll" resultType="java.util.Map">
+		select id as funid,parentid,name from t_dt_function
+	</select>
+		<delete id="deleteRoleFunction" parameterType="java.util.Map">
+		DELETE FROM T_AS_ROLEFUNCTION
+		<where>
+			<if test="null!=ROLEID and ''!=ROLEID"> and ROLEID=#{ROLEID} </if>
+			<if test="list != null">
+			<foreach collection="list" item="item" open="AND FUNID IN(" separator="," close=")">
+				#{item.FUNID}
+			</foreach>
+			</if> 
+			<if test="null!=ROLEFUNID and ''!=ROLEFUNID"> and ROLEFUNCTIONID=#{ROLEFUNCTIONID} </if>
+		</where>
+	</delete>	
+	<!-- function 功能 -->
+	<insert id="insertFunction" parameterType="java.util.Map">
+		insert into t_dt_function(parentid,name,linkurl,prjid,status,priority,remark)
+		values(#{parentid},#{name},#{linkurl},#{prjid},#{status},#{priority},#{remark})
+	</insert>
+	<update id="updateFunction" parameterType="java.util.Map">
+		update t_dt_function
+		<set>
+			<if test="parentid !=null and ''!=parentid">parentid = #{parentid},</if>
+			<if test="name !=null and ''!=name">name = #{name},</if>
+			<if test="linkurl !=null and ''!=linkurl">linkurl = #{linkurl},</if>
+			
+			<if test="prjid !=null and ''!=prjid">prjid = #{prjid},</if>
+			<if test="status !=null and ''!=status">status = #{status},</if>
+			<if test="priority !=null and ''!=priority">priority = #{priority},</if>
+			<if test="remark !=null and ''!=remark">remark = #{remark}</if>
+		</set>
+		where id =#{id}
+	</update>
+	<delete id="deleteFunction" parameterType="java.util.Map" >
+		delete from t_dt_function where id =#{id}
+	</delete>
+	<select id="getFunctionList" resultType="java.util.LinkedHashMap" parameterType="java.util.Map">
+		select  df.id,df.remark,df.parentid,dfp.name as parentName,df.name,df.linkurl,df.prjid,df.status,df.priority,df.createTime
+		from t_dt_function df 
+		left join t_dt_function dfp ON (dfp.parentid=0 AND dfp.id=df.parentid)
+		<where> 
+			<if test="id !=null and ''!=id">  df.id = #{id} </if>
+			<if test="parentid !=null and ''!=parentid"> and df.parentid = #{parentid} </if>
+			<if test="name !=null and ''!=name"> and df.name like "%"#{name}"%"  </if>
+			<if test="parentName !=null and ''!=parentName"> and dfp.name like "%"#{parentName}"%" </if>
+			
+			<if test="linkurl !=null and ''!=linkurl"> and df.linkurl  like "%"#{linkurl}"%" </if>
+			<if test="prjid !=null and ''!=prjid"> and df.prjid=#{prjid} </if>
+			<if test="status !=null and ''!=status"> and df.status=#{status}</if>
+			<if test="priority !=null and ''!=priority"> and df.priority=#{priority}</if>
+		</where>
+		order by df.parentid asc,df.priority asc
+	</select>
+	<select id="getFunctionListNum" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(0)
+		from t_dt_function df 
+		left join t_dt_function dfp ON (dfp.parentid=0 AND dfp.id=df.parentid)
+		<where> 1=1 
+			<if test="id !=null and ''!=id"> and df.id = #{id} </if>
+			<if test="parentid !=null and ''!=parentid"> and df.parentid = #{parentid} </if>
+			<if test="name !=null and ''!=name"> and df.name like "%"#{name}"%"  </if>
+			<if test="parentName !=null and ''!=parentName"> and dfp.name like "%"#{parentName}"%" </if>
+			<if test="linkurl !=null and ''!=linkurl"> and df.linkurl  like "%"#{linkurl}"%" </if>
+			<if test="prjid !=null and ''!=prjid"> and df.prjid=#{prjid} </if>
+			<if test="status !=null and ''!=status"> and df.status=#{status}</if>
+			<if test="priority !=null and ''!=priority"> and df.priority=#{priority}</if>
+		</where>
+	</select>
+	
+		
+	
+	
+	
+	  
+	  <insert id="saveRoleFunction" parameterType="java.util.Map">
+		  INSERT INTO T_AS_ROLEFUNCTION(ROLEID,FUNID)
+	 	    <foreach collection="roleFunList" item="item" index="index" separator="union " open="("  close=")">
+				  select #{item.ROLEID},#{item.FUNID} from dual
+			</foreach>
+	  </insert>
+	 
+	  <select id="findFactFunByRole" parameterType="java.util.Map"
+		resultType="java.lang.String">
+		select tdf.id as funid  from t_as_rolefunction tar 
+		left join t_dt_function tdf on tar.funid=tdf.id
+		<where>
+			<if test="null!=roleid and ''!=roleid">
+				and tar.roleid=#{roleid}
+			</if>
+			and tdf.parentid!=0
+		</where>
+	</select>
+     <insert id="insertMaterial" useGeneratedKeys="true" keyProperty="mid" parameterType="java.util.Map">
+		insert into
+		t_dt_material(
+		    materialname,
+			materialcontent,
+			saveurl,
+			userid,
+			areaname,
+			smallname,
+			servecode,
+			sellcode,
+			createtime,
+			deptid,
+			timestamp
+		)
+		values (
+			#{materialname},
+			#{materialcontent},
+			#{saveurl},
+			#{userid},
+			#{areaname},
+			#{smallname},
+			#{servecode},
+			#{sellcode},
+			#{createtime},
+			#{deptid},
+			#{timestamp}
+		)
+	</insert>
+	<update id="updateMaterial" parameterType="java.util.Map">
+	 update t_dt_material set 
+	  <if test="status !=null and status != ''">status=#{status}</if>
+	 where materialid= #{materialid}
+	</update>
+	<select id="getMaterialList" parameterType="java.util.Map" resultType="java.util.Map">
+	  SELECT MA.*,US.REALNAME FROM T_DT_MATERIAL MA
+        INNER JOIN T_DT_USER US ON MA.USERID=US.ID
+        <where>
+	       <if test="null!=materialname and ''!=materialname"> ma.MATERIALNAME like "%"#{materialname}"%" </if>
+	       <if test="null!=status and ''!=status"> and ma.STATUS = #{status} </if>
+	       <if test="null!=deptid and ''!=deptid"> and ma.DEPTID = #{deptid} </if>
+	       <if test="null!=gainstarttime and ''!=gainstarttime"> and ma.CREATETIME &gt;= #{gainstarttime} </if>
+	       <if test="null!=gainendtime and ''!=gainendtime"> and ma.CREATETIME &lt;= #{gainendtime} </if>
+	   </where>
+	   order by ma.materialid desc
+	</select>
+	<select id="getMaterialListNum" resultType="java.lang.Integer" parameterType="java.util.Map">
+	    select count(0) from t_dt_material ma 
+          inner join t_dt_user us on ma.userid=us.id
+            <where>
+		       <if test="null!=materialname and ''!=materialname"> ma.materialname like "%"#{materialname}"%" </if>
+		       <if test="null!=status and ''!=status"> and ma.status = #{status} </if>
+	           <if test="null!=deptid and ''!=deptid"> and ma.deptid = #{deptid} </if>
+	           <if test="null!=gainstarttime and ''!=gainstarttime"> and ma.createtime &gt;= #{gainstarttime} </if>
+	           <if test="null!=gainendtime and ''!=gainendtime"> and ma.createtime &lt;= #{gainendtime} </if>
+	        </where>
+	</select>
+	
+	<select id="getQuestionList" parameterType="java.util.Map" resultType="java.util.Map" >
+	  select qu.quid,qu.qucontent,qu.quizid,qu.deptid,qu.quiztime,qu.status,tdd.departname,tdu.phone as tel,tdu.realname as quizname,tdd.departname as deptname,tdu.servecode,tda.name as areaname,
+       tda1.name as smallname
+       from t_dt_question  qu
+       left join t_dt_user tdu on qu.quizid=tdu.id
+       left join t_dt_area tda on tdu.areaname=tda.id
+	   left join t_dt_area tda1 on tdu.smallname=tda1.id
+       left join t_dt_depart tdd on qu.deptid=tdd.departid
+     <where>
+         <if test="null!=deptid and ''!=deptid and 1 !=deptid and '1'!=deptid">qu.deptid=#{deptid}</if>
+         <if test="null!=quizid and ''!=quizid">qu.quizid=#{quizid}</if>
+         <if test="null!=status and ''!=status"> and qu.status = #{status} </if>
+         <if test="null!=qucontent and ''!=qucontent"> and qu.qucontent like '%#{qucontent}%' </if>
+         <if test="null!=gainstarttime and ''!=gainstarttime"> and qu.quiztime &gt;= #{gainstarttime} </if>
+	     <if test="null!=gainendtime and ''!=gainendtime"> and qu.quiztime &lt;= #{gainendtime} </if>
+	     <if test="null!=areaname and ''!=areaname"> and tdu.areaname=#{areaname} </if>
+	     <if test="null!=samllname and ''!=samllname"> and tdu.areaname=#{samllname} </if>
+     </where>
+       order by qu.status asc,qu.quiztime  desc
+	</select>
+	<select id="getQuestionListNum" parameterType="java.util.Map" resultType="java.lang.Integer" >
+	  select count(0)
+       from t_dt_question  qu
+       left join t_dt_user tdu on qu.quizid=tdu.id
+       left join t_dt_area tda on tdu.areaname=tda.id
+   	   left join t_dt_depart tdd on qu.deptid=tdd.departid
+     <where>
+          <if test="null!=deptid and ''!=deptid and 1 !=deptid and '1'!=deptid">qu.deptid=#{deptid}</if>
+         <if test="null!=quizid and ''!=quizid">qu.quizid=#{quizid}</if>
+         <if test="null!=status and ''!=status"> and qu.status = #{status} </if>
+         <if test="null!=qucontent and ''!=qucontent"> and qu.qucontent like "%"#{qucontent}"%" </if>
+         <if test="null!=gainstarttime and ''!=gainstarttime"> and qu.quiztime &gt;= #{gainstarttime} </if>
+	     <if test="null!=gainendtime and ''!=gainendtime"> and qu.quiztime &lt;= #{gainendtime} </if>
+     </where>
+	</select>
+		<select id="getQuestionById" parameterType="java.lang.Integer" resultMap="question" >
+	  select * from t_dt_question
+     <where>
+      <if test="null!=_parameter and ''!=_parameter">quid=#{_parameter}</if>
+     </where>
+   </select>
+   <select id="countQuestionByDepartmentIdAndContent" parameterType="java.util.Map" resultType="java.lang.Integer" >
+	  select count(0) from t_dt_question
+     <where>
+      deptid=#{departmentId} and qucontent=#{content}
+     </where>
+   </select>
+   <select id="countQuestionByUserIdAndContent" parameterType="java.util.Map" resultType="java.lang.Integer" >
+	  select count(0) from t_dt_question
+     <where>
+      quizid=#{userId} and qucontent=#{content}
+     </where>
+   </select>
+    <select id="getQuestionIdByDepartmentIdAndContent" parameterType="java.util.Map" resultType="java.lang.Integer" >
+	  select quid from t_dt_question
+     <where>
+      deptid=#{departmentId} and qucontent=#{content}
+     </where>
+   </select>
+   <select id="getQuestionByUserId" parameterType="java.lang.String" resultMap="question">
+	  select * from  t_dt_question where quizid=#{_parameter}
+   </select>
+   <delete id="deleteQuestionByUserId" parameterType="java.lang.String"  >
+	  delete from t_dt_question where quizid=#{_parameter}
+   </delete>
+   <delete id="deleteAnswerByQuestionId" parameterType="java.lang.Integer"  >
+	  delete from t_dt_answer where quid=#{_parameter}
+   </delete>
+	<insert id="addQuestion"  parameterType="com.fute.backer.model.Question">
+	 insert into t_dt_question(qucontent,quizid,deptid,quiztime,`status`) 
+	 values(#{content},#{userId},#{departmentId},now(),#{status})
+	</insert>
+	<select id="getAnswerByQuestionById" parameterType="java.lang.Integer" resultMap="answer" >
+	  select * from t_dt_answer where quid=#{_parameter}
+    </select>
+	<select id="getAnswerDetailByQuestionById" parameterType="java.lang.Integer" resultType="java.util.Map" >
+	  select an.answercontent,an.answertime,u.username,u.realname,dep.departname from t_dt_answer an left join t_dt_user u on u.id=an.answerid left join t_dt_depart dep on  u.departid=dep.departid  where an.quid=#{_parameter}
+    </select>
+	<insert id="insertQuestion"  parameterType="java.util.Map">
+	 insert into t_dt_question(qucontent,quizid,deptid,quiztime,`status`) 
+	 values(#{qucontent},#{quizid},#{deptid},now(),0)
+	</insert>
+	<insert id="addAnswer"  parameterType="com.fute.backer.model.Answer">
+	  insert into t_dt_answer(
+	         quid,
+	         answercontent,
+	         answerid,
+	         answertime)
+	   values(
+             #{questionId},
+             #{content},
+             #{userId},
+             now()
+     )
+	</insert>
+	<insert id="insertAnswer"  parameterType="java.util.Map">
+	  INSERT INTO T_DT_ANSWER(
+	  		 ANID,
+	         QUID,
+	         ANSWERCONTENT,
+	         ANSWERID,
+	         ANSWERTIME)
+	   VALUES(
+	         SEQ_T_DT_ANSWER.nextval(),
+             #{QUID},
+             #{ANSWERCONTENT},
+             #{ANSWERID},
+             sysdate)
+	</insert>
+	<update id="updateQuestionStatus"  parameterType="java.util.Map">
+	   update t_dt_question set 
+	   <if test="status!=null and status != ''"> status=#{status}</if>
+	   <if test="deptid!=null and deptid != ''">,deptid=#{deptid}</if>
+	   <where>
+	      quid=#{quid}
+	   </where>
+	</update>
+	
+	<delete id="deleteQuestion" parameterType="java.lang.Integer">
+		delete from t_dt_question where quid=#{questionId}
+	</delete>
+	<delete id="deleteAnswer" parameterType="java.lang.Integer">
+		delete from t_dt_answer where quid=#{questionId}
+	</delete>
+
+	
+	
+	<select id="getUserInfoByMater" parameterType="java.util.Map" resultType="java.util.Map">
+		select tdu.id,tdu.username,tdu.realname,tdu.position,tdu.phone,tdu.email,tdu.departid,tdd.departname,tdu.headimage,tdu.sex,tdu.wxnum,tdu.isagency,
+		tdu.areaname,tdu.smallname,tdu.servecode,tdu.sellcode,tam.createtime
+		from t_dt_user tdu
+		left join t_dt_depart tdd on tdu.departid=tdd.departid
+		left join t_as_materuser tam on tdu.id=tam.userid
+		left join t_dt_material tdm on tam.materid=tdm.materialid
+		<where>
+			 <if test="null!=realname and ''!=realname">and tdu.realname like "%"#{realname}"%"</if>
+			 <if test="null!=gainstarttime and ''!=gainstarttime"> and tam.createtime &gt;= #{gainstarttime} </if>
+		     <if test="null!=gainendtime and ''!=gainendtime"> and tam.createtime &lt;= #{gainendtime} </if>
+			 <if test="areaname != null and areaname !=''">and tdu.areaname=#{areaname}</if>
+			 <if test="smallname != null and smallname !=''">and tdu.smallname=#{smallname}</if>
+			 <if test="servecode != null and servecode !=''">and tdu.servecode=#{servecode}</if>
+			 <if test="sellcode != null and sellcode !=''">and tdu.sellcode=#{sellcode}</if>
+			 <if test="materid != null and materid !=''">and tam.materid=#{materid}</if>
+			 <if test="position != null and position != ''"> and tdu.position=#{position}</if>
+			 <if test="isagency != null and isagency != ''">and tdu.isagency=#{isagency}</if>
+		</where>
+		group by tdu.id
+	</select>
+		<select id="getUserInfoByload" parameterType="java.util.Map" resultType="java.util.Map">
+		select tdu.id,tdu.username,tdu.realname,tdu.position,tdu.phone,tdu.email,tdu.departid,tdd.departname,tdu.headimage,tdu.sex,tdu.wxnum,tdu.isagency,
+		tdu.areaname,tdu.smallname,tdu.servecode,tdu.sellcode,tam.createtime
+		from t_dt_user tdu
+		left join t_dt_depart tdd on tdu.departid=tdd.departid
+		left join t_as_materuser tam on tdu.id=tam.userid
+		left join t_dt_material tdm on tam.materid=tdm.materialid
+		<where>
+			 <if test="null!=realname and ''!=realname">and tdu.realname like "%"#{realname}"%"</if>
+			 <if test="null!=gainstarttime and ''!=gainstarttime"> and tam.createtime &gt;= #{gainstarttime} </if>
+		     <if test="null!=gainendtime and ''!=gainendtime"> and tam.createtime &lt;= #{gainendtime} </if>
+			 <if test="areaname != null and areaname !=''">and tdu.areaname=#{areaname}</if>
+			 <if test="smallname != null and smallname !=''">and tdu.smallname=#{smallname}</if>
+			 <if test="servecode != null and servecode !=''">and tdu.servecode=#{servecode}</if>
+			 <if test="sellcode != null and sellcode !=''">and tdu.sellcode=#{sellcode}</if>
+			 <if test="materid != null and materid !=''">and tam.materid=#{materid}</if>
+			 <if test="position != null and position != ''"> and tdu.position=#{position}</if>
+			 and tam.isdownload="1"
+		</where>
+		group by tam.materuserid desc
+	</select>
+	<select id="getMaterByUserid"  parameterType="java.util.Map" resultType="java.util.Map">
+		select tdm.saveurl,tdm.materialname,tdm.materialcontent,tdm.materialid,tdm.downloads,tdu1.realname,tdm.timestamp,date(tdm.createtime)as createtime ,tdm.deptid from t_dt_material  tdm 
+		left join t_as_materuser tam on tdm.materialid=tam.materid
+		left join t_dt_user tdu on tam.userid=tdu.id
+		left join t_dt_user tdu1 on tdm.userid=tdu1.id
+		<where>
+			<if test="userid != null and  userid !=''">and tdu.id=#{userid}</if>
+			and  tam.isdownload="0" and tdm.status="0"
+		</where>
+		order by tdm.createtime desc
+	</select>
+	<select id="getMaterId" parameterType="java.util.Map" resultType="java.lang.String">
+		select materialid from t_dt_material where  timestamp=#{timestamp}
+	</select>
+	<insert id="insertMarterUser" parameterType="java.util.Map">
+		insert t_as_materuser(materid,userid,createtime,isdownload)
+		values(#{materid},#{id},now(),#{isdownload})
+	</insert>
+	<update id="updateMaterDownload" parameterType="java.util.Map">
+		update t_dt_material set downloads=downloads+1 where timestamp=#{timestamp}
+	</update> 
+	<select id="getAllParentArea" parameterType="java.util.Map" resultType="java.util.Map">
+	  select id,name from  t_dt_area where parentid=#{parentid}
+	</select>
+   
+	<update id="updatePassword" parameterType="java.util.Map">
+		update t_dt_user set password=#{password} where id=#{id}
+	</update>
+	<update id="updateRole" parameterType="java.util.Map">
+		update t_dt_role 
+		<set>
+			<if test="name != null and name!=''">name=#{name},</if>
+			<if test="status != null and status!=''">status=#{status},</if>
+		</set>
+		where id=#{roleid}
+	</update>
+</mapper>

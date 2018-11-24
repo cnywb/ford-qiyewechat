@@ -1,0 +1,40 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fute.backer.dao.AreaMapper">
+    
+   <resultMap type="com.fute.backer.model.Area" id="area">
+		<id column="ID" property="id"/>
+		<result column="NAME" property="name"/>
+		<result column="CODE" property="code"/>
+		<result column="PARENTID" property="parentId"/>
+		<result column="REMARK" property="remark"/>
+		<result column="IFACTIVE" property="ifActive"/>
+		<result column="PRIORITY" property="priority"/>
+   </resultMap>
+	<select id="getAllAreaByParentId" parameterType="java.lang.Integer" resultMap="area">
+	  select * from  t_dt_area where parentid=#{_parameter}
+	</select>
+    <select id="getAllArea"  resultMap="area">
+	  select * from  t_dt_area
+	</select>
+    <insert id="addArea"  parameterType="com.fute.backer.model.Area">
+	  insert into t_dt_area(id,name,code,remark,parentid,ifactive,priority) values(#{id},#{name},#{code},#{remark},#{parentId},#{ifActive},#{priority})
+	</insert>
+	<update id="updateArea" parameterType="com.fute.backer.model.Area">
+		update t_dt_area set name=#{name},code=#{code},remark=#{remark},parentid=#{parentId},ifactive=#{ifActive},priority=#{priority} where id=#{id}
+	</update>
+	<update id="deleteAreaById" parameterType="java.lang.Integer" >
+		delete from t_dt_area where id=#{_parameter}
+	</update>
+	<select id="countChildAreaByParentId" parameterType="java.lang.Integer" resultType="java.lang.Integer" >
+	  select count(0) from t_dt_area where parentid=#{_parameter}
+    </select>
+    <select id="countUsedAreaById" parameterType="java.lang.Integer" resultType="java.lang.Integer" >
+	  select count(0) from t_dt_user where areaname=#{_parameter} or smallname=#{_parameter}
+    </select>
+	<select id="getAreaByCode" parameterType="java.lang.String" resultMap="area">
+	  select * from  t_dt_area where code=#{_parameter}
+	</select>
+	<select id="getAreaByCodeNotWithId" parameterType="java.util.Map" resultMap="area">
+	  select * from  t_dt_area where code=#{code} and id!=#{id}
+	</select>
+</mapper>

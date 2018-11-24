@@ -1,0 +1,64 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtMarkMapper">
+     <resultMap id="dtMarkResultMap" type="com.ford.qiye.model.DtMark">
+         <result column="MARKID"    property="id" />
+         <result column="MARKNAME"  property="name" />
+         <result column="IFACTIVE"  property="ifActive" />
+     </resultMap>
+
+
+
+
+    <select id="queryAll" resultMap="dtMarkResultMap">
+        select markid,markname,ifactive from t_dt_mark
+    </select>
+
+    <select id="queryList" resultMap="dtMarkResultMap" parameterType="java.util.Map">
+        select markid,markname,ifactive from t_dt_mark
+        <where>
+            <if test="name !=null and name !=''">and markname like '%'||#{name}||'%'</if>
+            <if test="id !=null and id !=''">and markid=#{id}</if>
+        </where>
+    </select>
+    <select id="findById" parameterType="java.util.Map" resultType="com.ford.qiye.model.DtMark">
+        SELECT MARKID as id,MARKNAME as name, IFACTIVE as ifActive FROM T_DT_MARK where MARKID=#{id}
+    </select>
+
+    <insert id="insert" parameterType="java.util.Map">
+        <selectKey resultType="java.lang.Long"  order="BEFORE" keyProperty="id">
+            SELECT SEQ_T_DT_MARK.Nextval as ID from DUAL
+        </selectKey>
+        insert into T_DT_MARK(MARKID,MARKNAME,IFACTIVE)
+        values(#{id},#{mark.name},#{mark.ifActive})
+    </insert>
+    <update id="update"  parameterType="java.util.Map">
+        update T_DT_MARK set
+        <if test="mark.name!=null and mark.name != ''"> MARKNAME=#{mark.name}</if>
+        <if test="mark.ifActive!=null and mark.ifActive != ''">,IFACTIVE=#{mark.ifActive}</if>
+        <where>
+            MARKID=#{mark.id}
+        </where>
+    </update>
+    <update id="updateById"  parameterType="java.util.Map">
+        update T_DT_MARK set
+        <if test="name!=null and name != ''"> MARKNAME=#{name}</if>
+        <if test="ifActive!=null and ifActive != ''">,IFACTIVE=#{ifActive}</if>
+        <where>
+            MARKID=#{id}
+        </where>
+    </update>
+    <update id="deleteById"  parameterType="java.util.Map">
+        DELETE  FROM  T_DT_MARK  where MARKID=#{id}
+    </update>
+
+    <select id="findByUserId" parameterType="java.util.Map" resultMap="dtMarkResultMap">
+        select tdm.* from  T_DT_MARK tdm,T_AS_USERMARK  tau where tdm.MARKID=tau.MARKID and tau.USERID=#{userId}
+    </select>
+    <insert id="insertUserMark" parameterType="java.util.Map">
+        INSERT INTO T_AS_USERMARK(USERMARKID,USERID,MARKID)
+         VALUES (SEQ_T_AS_USERMARK.Nextval,#{userId},#{markId})
+    </insert>
+    <delete id="deleteByUserId" parameterType="java.util.Map">
+       DELETE  FROM  T_AS_USERMARK  where USERID=#{userId}
+    </delete>
+</mapper>

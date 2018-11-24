@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.url.includeParams" value="none" />
+	<package name="manage" extends="struts-default"
+		namespace="/manage">
+		<action name="userBean" class="userBean">
+			<result name="userList">/pages/manage/userList.jsp</result>
+			<result name="toIndex" type="redirect">
+				/manage/userBean!findUserList.action
+			</result>
+			<result name="userDetail">
+				/pages/manage/userDetail.jsp
+			</result>
+			<result name="initModifyUser">
+				/pages/manage/modifyUser.jsp
+			</result>
+			<result name="initAddUser">
+				/pages/manage/addUser.jsp
+			</result>
+			<result name="error">/pages/error.jsp</result>
+		</action>
+		<action name="roleBean" class="roleBean">
+			<result name="roleList">/pages/manage/roleList.jsp</result>
+			<result name="toIndex" type="redirect">
+				/manage/roleBean!findRoleList.action
+			</result>
+			<result name="initAddRole">
+				/pages/manage/addRole.jsp
+			</result>
+			<result name="initModifyRole">
+				/pages/manage/modifyRole.jsp
+			</result>
+			<result name="roleDetail">
+				/pages/manage/roleDetail.jsp
+			</result>
+			<result name="error">
+				/pages/error.jsp
+			</result>
+		</action>
+		<action name="projectBean" class="projectBean">
+			<result name="projectList">
+				/pages/manage/projectList.jsp
+			</result>
+			<result name="toIndex" type="redirect">
+				/manage/projectBean!findProjectList.action
+			</result>
+			<result name="initAddProject">
+				/pages/manage/addProject.jsp
+			</result>
+			<result name="initModifyProject">
+				/pages/manage/modifyProject.jsp
+			</result>
+			<result name="projectDetail">
+				/pages/manage/projectDetail.jsp
+			</result>
+			<result name="error">
+				/pages/error.jsp
+			</result>
+		</action>
+		<action name="functionBean" class="functionBean">
+			<result name="functionList">
+				/pages/manage/functionList.jsp
+			</result>
+			<result name="toIndex" type="redirect">
+				/manage/functionBean!findFunctionList.action
+			</result>
+			<result name="functionDetail">
+				/pages/manage/functionDetail.jsp
+			</result>
+			<result name="initAddFunction">
+				/pages/manage/addFunction.jsp
+			</result>
+			<result name="initModifyFunction">
+				/pages/manage/modifyFunction.jsp
+			</result>
+			<result name="error">
+				/pages/error.jsp
+			</result>
+		</action>
+
+		<action name="userPermissionBean" class="userPermissionBean">
+			<result name="initUpdateUserPermission">
+				/pages/manage/updateUserPermission.jsp
+			</result>
+		</action>
+		<action name="rolePermissionBean" class="rolePermissionBean">
+			<result name="initUpdateRolePermission">
+				/pages/manage/updateRolePermission.jsp
+			</result>
+		</action>
+		<action name="stopBussinessJson" class="stopBussinessJsonBean">
+			<result name="stopBSelect">/pages/visit/mobilest/stopBusinessCRUD.jsp</result>
+			<result name="stopBAdd" type="redirect">
+				/manage/stopBussinessJson!stopBSelect.action?year=${#request.year}
+			</result>
+			<result name="stopBModify" type="redirect">
+				/manage/stopBussinessJson!stopBSelect.action?year=${#request.year}
+			</result>
+			<result name="stopBDelete" type="redirect">
+				/manage/stopBussinessJson!stopBSelect.action?year=${#request.year}
+			</result>
+		</action>
+	</package>
+	<package name="user" extends="manage-default"  namespace="/user">
+		<action name="userBean" class="userBean">
+			<result name="initModifyPassword">
+				/pages/manage/upPassword.jsp
+			</result>
+			<result name="toMain" type="redirect">
+				/login/check!login.action
+			</result>
+		</action>
+	</package>
+</struts>

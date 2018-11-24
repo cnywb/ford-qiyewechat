@@ -1,0 +1,87 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtQuestionMapper">
+    <resultMap type="com.ford.qiye.model.DtQuestion" id="questionResultMap">
+        <result column="QUID"      property="id" />
+        <result column="QUCONTENT" jdbcType="VARCHAR" property="content" />
+        <result column="QUIZID"    jdbcType="VARCHAR" property="userId" />
+        <result column="DEPTID"    jdbcType="DECIMAL" property="departId" />
+        <result column="QUIZTIME"   jdbcType="TIMESTAMP" property="questionTime" />
+        <result column="STATUS"     property="status" />
+        <result column="AREA_NAME"   property="areaName" />
+        <result column="SMALL_NAME"   property="smallName" />
+        <result column="DEALER_NAME"   property="dealerName" />
+        <result column="DEPART_NAME"   property="departName" />
+        <result column="REALNAME"     property="realName" />
+        <result column="TEL"     property="tel" />
+    </resultMap>
+
+
+
+    <select id="findByPage" parameterType="java.util.Map" resultMap="questionResultMap" >
+        select qu.quid,qu.qucontent,qu.quizid,qu.deptid,qu.quiztime,qu.status,tdd.departname as DEPART_NAME,tdu.phone as tel,tdu.realname as realName,
+            tdu.servecode,tda.name as AREA_NAME,
+            tda1.name as SMALL_NAME
+        from t_dt_question  qu
+        left join t_dt_user tdu on qu.quizid=tdu.id
+        left join t_dt_area tda on tdu.areaname=tda.id
+        left join t_dt_area tda1 on tdu.smallname=tda1.id
+        left join t_dt_depart tdd on qu.deptid=tdd.departid
+        <where>
+            <if test="null!=departId and 1!=departId ">
+                qu.deptid=#{departId,jdbcType=NUMERIC}
+            </if>
+            <if test="null!=userId  and ''!=userId">and qu.quizid=#{userId}</if>
+            <if test="null!=status and ''!=status"> and qu.status = #{status,jdbcType=NUMERIC} </if>
+            <if test="null!=content  and ''!=content"> and qu.qucontent LIKE '%'||#{content}||'%' </if>
+            <if test="null!=startDate and ''!=startDate"> and qu.quiztime &gt;= #{startDate} </if>
+            <if test="null!=endDate  and ''!=endDate"> and qu.quiztime &lt;= #{endDate} </if>
+            <if test="null!=areaName and ''!=areaName"> and tda.areaname=#{areaName} </if>
+            <if test="null!=smallName and ''!=smallName"> and tda1.areaname=#{smallName} </if>
+            <if test="null!=isAgency and ''!=isAgency"> and tdu.ISAGENCY=#{isAgency} </if>
+
+        </where>
+        order by qu.status asc,qu.quiztime  desc
+    </select>
+    <select id="findByUserId" parameterType="java.util.Map" resultMap="questionResultMap" >
+        select qu.quid,qu.qucontent,qu.quizid,qu.deptid,qu.quiztime,qu.status,tdd.departname as DEPART_NAME,tdu.phone as tel,tdu.realname as realName,
+        tdu.servecode,tda.name as AREA_NAME,
+        tda1.name as SMALL_NAME
+        from t_dt_question  qu
+        left join t_dt_user tdu on qu.quizid=tdu.id
+        left join t_dt_area tda on tdu.areaname=tda.id
+        left join t_dt_area tda1 on tdu.smallname=tda1.id
+        left join t_dt_depart tdd on qu.deptid=tdd.departid
+        <where>
+            <if test="null!=userId  and ''!=userId">and qu.quizid=#{userId}</if>
+        </where>
+        order by qu.status asc,qu.quiztime  desc
+    </select>
+    <select id="findById" parameterType="java.lang.Long" resultMap="questionResultMap">
+        SELECT * FROM T_DT_QUESTION where QUID=${id}
+    </select>
+    <select id="countByDepartId" parameterType="java.util.Map" resultType="java.lang.Integer" >
+        select count(QUID) from t_dt_question where  deptid=#{departId} and QUID=#{id}
+    </select>
+    <select id="findByContent" parameterType="java.util.Map" resultType="java.lang.Long" >
+        select count(QUID) from t_dt_question where  quizid=#{userId} and qucontent=#{content}
+    </select>
+    <update id="updateQuestionStatus"  parameterType="java.util.Map">
+        update T_DT_QUESTION set
+        <if test="status!=null and status != ''"> STATUS=#{status}</if>
+        <if test="departId!=null and departId != ''">DEPTID=#{departId}</if>
+        <where>
+            QUID=#{id}
+        </where>
+    </update>
+    <update id="deleteById"  parameterType="java.lang.Long">
+        DELETE  FROM  t_dt_question  where QUID=${id}
+    </update>
+
+    <insert id="insert"  parameterType="com.ford.qiye.model.DtQuestion">
+        <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="id">
+            SELECT SEQ_T_DT_QUESTION.Nextval as ID from DUAL
+        </selectKey>
+        insert into t_dt_question(QUID,qucontent,quizid,deptid,quiztime,status)
+        values(#{id},#{content},#{userId},#{departId},sysdate,#{status})
+    </insert>
+</mapper>

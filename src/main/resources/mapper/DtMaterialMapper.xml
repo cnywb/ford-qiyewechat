@@ -1,0 +1,100 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtMaterialMapper">
+    <resultMap type="com.ford.qiye.model.DtMaterial" id="materialResultMap">
+        <result column="MATERIALID" jdbcType="DECIMAL" property="id" />
+        <result column="MATERIALNAME" jdbcType="VARCHAR" property="name" />
+        <result column="MATERIALCONTENT" jdbcType="VARCHAR" property="content" />
+        <result column="SAVEURL" jdbcType="VARCHAR" property="saveUrl" />
+        <result column="DOWNLOADS"  property="download" />
+        <result column="STATUS"   jdbcType="DECIMAL" property="status" />
+        <result column="USERID"  jdbcType="VARCHAR" property="userId" />
+        <result column="AREANAME" jdbcType="VARCHAR" property="areaName" />
+        <result column="SMALLNAME" jdbcType="VARCHAR" property="smallName" />
+        <result column="SERVECODE" jdbcType="VARCHAR" property="serveCode" />
+        <result column="SELLCODE" jdbcType="VARCHAR" property="sellCode" />
+        <result column="CREATETIME" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="DEPTID" jdbcType="DECIMAL" property="departId" />
+        <result column="TIMESTAMP" jdbcType="VARCHAR" property="timestamp" />
+        <result column="REALNAME" jdbcType="VARCHAR" property="realName" />
+    </resultMap>
+
+    <select id="findByUserId"  parameterType="java.util.Map"  resultMap="materialResultMap">
+        select tdm.saveurl,tdm.MATERIALNAME,
+                      tdm.materialcontent,
+                    tdm.materialid,tdm.DOWNLOADS,tdu.realname,tdm.timestamp,tdm.createtime ,tdm.deptid from t_dt_material  tdm
+          join t_as_materuser tam on tdm.materialid=tam.materid
+          join t_dt_user tdu on tam.userid=tdu.id
+        <where>
+            <if test="userId != null and  userId !=''">and tdu.id=#{userId}</if>
+            <if test="isDownload != null and  isDownload !=''">and  tam.ISDOWNLOAD=#{isDownload}</if>
+            <if test="status != null and  status !=''">and tdm.status=#{status} </if>
+        </where>
+        order by tdm.createtime desc
+    </select>
+
+
+    <insert id="insert" parameterType="com.ford.qiye.model.DtMaterial">
+        <selectKey resultType="java.lang.Long"  order="BEFORE" keyProperty="id">
+            SELECT SEQ_T_DT_MATERIAL.Nextval as ID from DUAL
+        </selectKey>
+      insert into
+		T_DT_MATERIAL(
+            MATERIALID,
+		    MATERIALNAME,
+			MATERIALCONTENT,
+			SAVEURL,
+			USERID,
+			AREANAME,
+			SMALLNAME,
+			SERVECODE,
+			SELLCODE,
+			CREATETIME,
+			DEPTID,
+			TIMESTAMP,
+            STATUS,
+            downloads
+		)
+		VALUES (
+            #{id},
+			#{name,jdbcType=VARCHAR},
+			#{content,jdbcType=VARCHAR},
+			#{saveUrl,jdbcType=VARCHAR},
+			#{userId,jdbcType=VARCHAR},
+			#{areaName,jdbcType=VARCHAR},
+			#{smallName,jdbcType=VARCHAR},
+			#{serveCode,jdbcType=VARCHAR},
+			#{sellCode,jdbcType=VARCHAR},
+			sysdate,
+			#{departId},
+			#{timestamp,jdbcType=VARCHAR},
+            #{status},
+            #{download}
+		)
+    </insert>
+
+    <select id="queryList" parameterType="java.util.Map" resultMap="materialResultMap">
+        SELECT MA.*,US.REALNAME FROM T_DT_MATERIAL MA
+        INNER JOIN T_DT_USER US ON MA.USERID=US.ID
+        <where>
+            <if test="null!=name and ''!=name"> ma.MATERIALNAME like '%'||#{name}||'%' </if>
+            <if test="null!=status and ''!=status"> and ma.STATUS = #{status} </if>
+            <if test="null!=departId and ''!=departId"> and ma.DEPTID = #{departId} </if>
+            <if test="null!=startDate and ''!=startDate"> and ma.CREATETIME &gt;= #{startDate} </if>
+            <if test="null!=endDate and ''!=endDate"> and ma.CREATETIME &lt;= #{endDate} </if>
+        </where>
+        order by ma.materialid desc
+    </select>
+
+    <select id="findById" parameterType="java.util.Map" resultMap="materialResultMap">
+        SELECT * FROM T_DT_MATERIAL  where MATERIALID= #{id}
+    </select>
+
+    <update id="updateStatus" parameterType="java.util.Map">
+        update t_dt_material set  status=#{status}   where MATERIALID= #{id}
+    </update>
+
+
+    <update id="updateDownload" parameterType="java.util.Map">
+        UPDATE T_DT_MATERIAL SET DOWNLOADS=DOWNLOADS+1 WHERE MATERIALID=#{id}
+    </update>
+</mapper>

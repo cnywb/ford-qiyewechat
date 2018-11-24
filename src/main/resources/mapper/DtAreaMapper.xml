@@ -1,0 +1,60 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtAreaMapper">
+    
+   <resultMap type="com.ford.qiye.model.AreaTree" id="areaResult">
+		<id column="ID" property="id"/>
+		<result column="NAME" property="name"/>
+		<result column="CODE" property="code"/>
+		<result column="PARENTID" property="parentId"/>
+		<result column="REMARK" property="remark"/>
+		<result column="IFACTIVE" property="ifActive"/>
+		<result column="PRIORITY" property="priority"/>
+   </resultMap>
+	<select id="queryByParentId" parameterType="java.lang.Long" resultMap="areaResult">
+	  select * from  t_dt_area where parentid=#{parentId}
+	</select>
+    <select id="getAllArea"  resultMap="areaResult">
+	  select * from  t_dt_area
+	</select>
+	<select id="findById"  resultType="com.ford.qiye.model.Area">
+		select * from  t_dt_area where id=#{id}
+	</select>
+    <insert id="insert"  parameterType="java.util.Map">
+		<selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="id">
+			SELECT SEQ_T_DT_ANSWER.Nextval as ID from DUAL
+		</selectKey>
+	  insert into t_dt_area(id,name,code,remark,parentid,ifactive,priority)
+	  values(#{id},#{name},#{code},#{remark},#{parentId},#{ifActive},#{priority})
+	</insert>
+	<update id="update" parameterType="java.util.Map">
+		UPDATE T_DT_AREA SET NAME=#{name}
+		<if test="code != null and code != ''">
+			,CODE=#{code}
+		</if>
+		<if test="remark != null and remark != ''">
+			,REMARK=#{remark}
+		</if>
+		<if test="ifActive != null and ifActive != ''">
+			,IFACTIVE=#{ifActive}
+		</if>
+		<if test="priority != null and priority != ''">
+			,PRIORITY=#{priority}
+		</if>
+	  	 where ID=#{id}
+	</update> 
+	<update id="delete" parameterType="java.lang.Integer" >
+		delete from t_dt_area where id=#{id}
+	</update>
+	<select id="countChildAreaByParentId" parameterType="java.lang.Integer" resultType="java.lang.Integer" >
+	  select count(0) from t_dt_area where parentid=#{_parameter}
+    </select>
+    <select id="countUsedAreaById" parameterType="java.lang.Integer" resultType="java.lang.Integer" >
+	  select count(0) from t_dt_user where areaname=#{_parameter} or smallname=#{_parameter}
+    </select>
+	<select id="getAreaByCode" parameterType="java.lang.String" resultMap="areaResult">
+	  select * from  t_dt_area where code=#{_parameter}
+	</select>
+	<select id="getAreaByCodeNotWithId" parameterType="java.util.Map" resultMap="areaResult">
+	  select * from  t_dt_area where code=#{code} and id!=#{id}
+	</select>
+</mapper>

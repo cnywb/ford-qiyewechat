@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
+    
+	<bean id="loginBean" class="com.fute.manage.action.LoginAction"
+		scope="prototype">
+		<property name="systemService" ref="systemService" />
+	</bean>
+
+	<bean id="BasicBean" class="com.fute.backer.action.BasicAction"
+		scope="prototype">
+		<property name="basicService" ref="basicService" />
+		<property name="systemService" ref="systemService" />
+	</bean>
+
+
+	<bean id="basicService" class="com.fute.backer.service.impl.BasicServiceImp"
+		scope="prototype">
+		<property name="basicMapper" ref="basicMapper" />
+		<property name="systemMapper" ref="systemMapper" />
+	</bean>
+
+
+	<bean id="basicMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.fute.backer.dao.BasicMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<bean id="downloadbean" class="com.fute.backer.action.SystemAction" 	scope="prototype">
+		<property name="basicService" ref="basicService" />
+		<property name="systemService" ref="systemService" />
+	</bean>
+	<!--角色与功能授权-->
+	<bean id="dtRoleFunctionMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtRoleFunctionMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<!--消息-->
+	<bean id="dtMessageMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtMessageMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<!--地区-->
+	<bean id="dtAreaMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtAreaMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<!--物料-->
+	<bean id="dtMaterialMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtMaterialMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<bean id="dtMaterialUserMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtMaterialUserMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<!--标签管理-->
+	<bean id="dtMarkMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtMarkMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+
+	<!--部门-->
+	<bean id="departmentMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtDepartmentMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<!--系统参数-->
+	<bean id="dtSysParameterMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtParameterMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<!--用户-->
+	<bean id="dtUserMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtUserMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<!--角色-->
+	<bean id="dtRoleMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtRoleMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<!--菜单功能列表-->
+	<bean id="dtFunctionMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtFunctionMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<!--问题回答-->
+	<bean id="dtAnswerMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtAnswerMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<!--App-->
+	<bean id="dtAppMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtAppMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+
+	<!--问题列表-->
+	<bean id="dtQuestionMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtQuestionMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+
+	<!--任务列表-->
+	<bean id="dtTaskMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.DtTaskMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+	<!--操作日志列表-->
+	<bean id="operationLogMapper" class="org.mybatis.spring.mapper.MapperFactoryBean">
+		<property name="mapperInterface" value="com.ford.qiye.dao.OperationLogMapper" />
+		<property name="sqlSessionFactory" ref="eduFactory" />
+	</bean>
+</beans>

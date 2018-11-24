@@ -1,0 +1,17 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fute.backer.dao.SystemParameterMapper">
+    
+  <resultMap type="com.fute.backer.model.SystemParameter" id="systemParameter">
+    <id column="ID" property="id"/>
+    <result column="CATEGORY" property="category"/>
+    <result column="NAME" property="name"/>
+    <result column="P_KEY" property="paramKey"/>
+    <result column="P_VALUE" property="paramValue"/>
+  </resultMap>
+	<select id="getByKey" parameterType="java.lang.String" resultMap="systemParameter">
+	  select * from  t_dt_sys_parameter where P_KEY=#{_parameter}
+	</select>
+	<update id="updateValueByKey" parameterType="java.util.Map" >
+		update t_dt_sys_parameter set P_VALUE=#{value}  where P_KEY=#{key}
+	</update>
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.url.includeParams" value="none" />
+	  
+	<package name="valid" extends="manage-default" namespace="/valid">
+		<action name="valid" class="loginBean"> 
+			<result name="right">/right.jsp</result>
+			<result name="top">/top.jsp</result>
+			<result name="left">/left.jsp</result>  
+			<result name="login">/login.jsp</result> 
+			<result name="valid">/main.jsp</result>
+			<result name="select">/select.jsp</result>
+		</action>
+	</package>
+	<package name="login" extends="app-default" namespace="/login">
+		<action name="check" class="loginBean">
+			<result name="select">/select.jsp</result>
+			<result name="login">/login.jsp</result>
+			<result name="valid">/main.jsp</result>
+			<result name="logOut">/login.jsp</result>
+			<result name="index">/index.jsp</result>
+			<result name="error">/pages/error.jsp</result>
+		</action>
+	</package>
+	<package name="cmcc" extends="app-default" namespace="/cmcc">
+		<action name="order" class="smobileBean">
+			<result name="query">/pages/smobile/orderQuery.jsp</result>
+			<result name="nopermission">
+				/pages/smobile/nopermission.jsp
+			</result>
+		</action>
+	</package>
+
+ 
+
+
+</struts>
+
+

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.url.includeParams" value="none" />
+
+
+	<package name="backer" namespace="/backer" extends="app-default">
+		<action name="uploadimg" class="uploadimgBean">
+			<result name="showImg">
+				/basic/showImg.jsp
+			</result>
+			<result name="showImgMulti">
+				/basic/showImgMulti.jsp
+			</result>
+			<result name="showImg2">
+				/basic/showImg2.jsp
+			</result>
+		</action>
+		<action name="system" class="systemBean">
+			<result name="adminRole">
+				/management/role_list.jsp
+			</result>
+			<result name="adminMenu">
+				/management/myMenu_list.jsp
+			</result>
+		    <result name="getMaterialList">
+				/material/materialList.jsp
+			</result>
+			<result name="getQuestionList">
+				/management/questionList.jsp
+			</result>
+			<result name="getAllQuestionList">
+				/management/allQuestion.jsp
+			</result>
+			<result name="findDepartListAll">
+				/management/addQuestion.jsp
+			</result>
+			
+			<result name="getAgencyList">
+				/management/agencyList.jsp
+			</result>
+			
+			<result name="showImg">
+				/basic/showImg.jsp
+			</result>
+			<result name="getUserInfoByMater">
+				/material/materialdetail.jsp
+			</result>
+			<result name="getUserInfoByload">
+				/material/materialdownload.jsp
+			</result>
+			<result name="getMaterByuserid">
+				/material/getMaterByuserid.jsp
+			</result>
+			<result name="getuserid" type="redirect">
+				https://open.weixin.qq.com/connect/oauth2/authorize?appid=${corpid}&amp;redirect_uri=${reurl}&amp;response_type=code&amp;scope=snsapi_base&amp;state=${state}#wechat_redirect
+			</result>
+			<result name="mainjsp">
+				/main.jsp
+			</result>
+			<result name="loadjsp">
+				/material/loadjsp.jsp
+			</result>
+			<result name="initpassword">
+				/basic/upPassword.jsp
+			</result>
+			<result name="login">
+				/login.jsp
+			</result>
+			<result name="tishi">
+				/basic/tishi.jsp	
+			</result>
+		</action>
+		
+		<action  name="Basic" class="BasicBean">
+			<result name="getEmployeeList">
+				/basic/employeeList.jsp
+			</result>
+			<result name="getMarkList">
+				/basic/markList.jsp
+			</result>
+			<result name="getMessageList">
+				/basic/messageList.jsp
+			</result>
+			<result name="showImg">
+				/basic/showImg.jsp
+			</result>
+			<result name="getAppList">
+				/basic/appList.jsp
+			</result>
+			<result name="orgtree">
+				/basic/orgtree.jsp	
+			</result>
+			<result name="initagency">
+				/basic/agency_Into.jsp
+			</result>
+			<result name="agencyInfoResult">
+				/basic/agencyInfoResult.jsp
+			</result>
+			<result name="initemployee">
+				/basic/employ_Into.jsp
+			</result>
+			<result name="employeeInfoResult">
+				/basic/employeeInfoResult.jsp
+			</result>
+			
+		</action>
+		<action name="download" class="downloadbean">
+			<result name="success" type="stream">
+				<!-- 下载文件的类型,省略-->
+				<param name="inputName">myFile</param>
+				<param name="contentDisposition">attachment;filename=${filename}</param>
+				<param name="bufferSize">1024</param>
+			</result>
+		</action>
+	</package>
+
+</struts>

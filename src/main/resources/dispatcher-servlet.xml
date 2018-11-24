@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	   xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd">
+	<!-- 扫描加载注解 -->
+	<context:annotation-config />
+	<context:component-scan base-package="com.ford.qiye.web" />
+	<!-- Spring MVC自动 -->
+	<mvc:annotation-driven validator="validator">
+		<mvc:message-converters>
+			<bean class="com.ford.qiye.web.converter.StringEscapeHttpMessageConverter" />
+			<ref bean="mappingJsonHttpMessageConverter"/>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<bean id="mappingJsonHttpMessageConverter" name="mappingJacksonHttpMessageConverter" class="com.ford.qiye.web.json.MappingJsonHttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/html;charset=UTF-8</value>
+				<value>text/json;charset=UTF-8</value>
+				<value>application/json;charset=UTF-8</value>
+			</list>
+		</property>
+		<property name="objectMapper" ref="objectMapper"/>
+	</bean>
+
+	<bean  id="objectMapper"  class="com.ford.qiye.web.json.CustomObjectMapper"/>
+	<!-- hibernate validator 资源配置 -->
+	<bean name="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource" ref="messageSource" />
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+	</bean>
+	<bean  id="webBindingInitializer"  class="org.springframework.web.bind.support.ConfigurableWebBindingInitializer">
+		<property name="validator"  ref="validator"/>
+	</bean>
+	<!-- 基于cookie的i18n -->
+	<bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+		<property name="cookieName" value="clientlanguage" />
+		<property name="cookieMaxAge" value="94608000" />
+		<property name="defaultLocale" value="zh" />
+	</bean>
+
+	<bean id="localeChangeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor"/>
+	<!-- i18n -->
+	<bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basenames">
+			<list>
+				<value>classpath:i18n/messages</value>
+			</list>
+		</property>
+		<property name="defaultEncoding" value="UTF-8" />
+		<property name="fallbackToSystemLocale" value="true" />
+		<property name="useCodeAsDefaultMessage" value="false" />
+	</bean>
+
+	<!-- Excel Report View -->
+	<bean id="reportExcelView" class="com.ford.qiye.web.view.ReportExcelView"/>
+
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.InternalResourceView" />
+		<property name="prefix" value="/WEB-INF/view/" />
+		<property name="suffix" value=".jsp" />
+		<property name="cache" value="false"/>
+		<property name="cacheLimit" value="1"/>
+	</bean>
+	<!--文件上传-->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver"/>
+
+	<bean id="exceptionResolver"
+		class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<property name="defaultErrorView">
+			<value>Error</value>
+		</property>
+		<property name="exceptionMappings">
+			<props>
+				<prop key="java.io.IOException">sqlFailure</prop>
+				<prop key="java.sql.SQLException">sqlFailure</prop>
+				<prop key="org.springframework.dao.DataAccessException">
+					dataAccessFailure
+				</prop>
+				<prop key="org.springframework.jdbc.BadSqlGrammarException">
+					sqlFailure
+				</prop>
+				<prop key="freemarker.template.TemplateException">
+					templateFailure
+				</prop>
+			</props>
+		</property>
+	</bean>
+
+	<bean name="methodName"
+		class="org.springframework.web.servlet.mvc.multiaction.ParameterMethodNameResolver">
+		<property name="paramName">
+			<value>method</value>
+		</property>
+	</bean>
+
+</beans>

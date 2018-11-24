@@ -1,0 +1,37 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtAnswerMapper">
+
+    <resultMap type="com.ford.qiye.model.DtAnswer" id="dtAnswerResultMap">
+        <result column="ANID"   property="id" />
+        <result column="QUID"   property="questionId" />
+        <result column="ANSWERCONTENT" jdbcType="VARCHAR" property="answerContent" />
+        <result column="ANSWERID"  jdbcType="VARCHAR" property="userId" />
+        <result column="ANSWERTIME" jdbcType="TIMESTAMP" property="answerTime" />
+        <result column="USERNAME"  property="userName" />
+        <result column="REALNAME"   property="realName" />
+        <result column="DEPARTNAME"   property="departName" />
+    </resultMap>
+
+    <insert id="saveAnswer"  parameterType="com.ford.qiye.model.DtAnswer">
+        <selectKey resultType="java.lang.Long" order="BEFORE" keyProperty="id">
+            SELECT SEQ_T_DT_ANSWER.Nextval as ID from DUAL
+        </selectKey>
+        INSERT INTO T_DT_ANSWER(
+        ANID,
+        QUID,
+        ANSWERCONTENT,
+        ANSWERID,
+        ANSWERTIME)
+        VALUES(
+        #{id},
+        #{questionId},
+        #{answerContent},
+        #{userId},
+        sysdate)
+    </insert>
+
+    <select id="queryByQuestionId" parameterType="java.lang.Long" resultMap="dtAnswerResultMap" >
+        SELECT AN.ANSWERCONTENT,AN.ANSWERTIME,U.USERNAME,U.REALNAME,DEP.DEPARTNAME
+        FROM T_DT_ANSWER AN LEFT JOIN T_DT_USER U ON U.ID=AN.ANSWERID LEFT JOIN T_DT_DEPART DEP ON  U.DEPARTID=DEP.DEPARTID  WHERE AN.QUID=#{questionId}
+    </select>
+</mapper>

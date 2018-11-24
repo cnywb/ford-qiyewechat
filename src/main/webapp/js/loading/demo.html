@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link type="text/css" rel="stylesheet" href="waitMe.css">
+    <script src="https://cdn.jsdelivr.net/jquery/3.1.0/jquery.min.js"></script>
+    <script src="waitMe.js"></script>
+</head>
+<body>
+
+<br/><br/>
+<br/><br/><br/><br/><br/><br/>
+<div>
+    <button id="btnTest">点击我</button>
+</div>
+<script type="text/javascript">
+    $(function(){
+        function loading(el) {
+            el.waitMe({
+                effect: 'ios',
+                text: 'Please wait...',
+                bg: 'rgba(255,255,255,0.4)',
+                color: '#000',
+                maxSize: '',
+                source: 'img.svg',
+                textPos: 'vertical',
+                onClose: function () {
+                }
+            });
+        }
+        $('body').addClass('waitMe_body');
+        loading($('body'));
+
+        setTimeout(function(){
+            $('body').waitMe('hide');
+        },8000);
+
+        $('#btnTest').on('click',function(){
+            alert('ddd');
+        });
+    });
+
+
+
+
+    function run_waitMe_body(effect){
+        $('body').addClass('waitMe_body');
+        var img = '';
+        var text = '';
+        if(effect == 'img'){
+            img = 'background:url(\'img.svg\')';
+        } else if(effect == 'text'){
+            text = 'Loading...';
+        }
+        var elem = $('<div class="waitMe_container ' + effect + '"><div style="' + img + '">' + text + '</div></div>');
+        $('body').prepend(elem);
+
+        setTimeout(function(){
+            $('body.waitMe_body').addClass('hideMe');
+            setTimeout(function(){
+                $('body.waitMe_body').find('.waitMe_container:not([data-waitme_id])').remove();
+                $('body.waitMe_body').removeClass('waitMe_body hideMe');
+            },200);
+        },8000);
+    }
+</script>
+</body>
+</html>

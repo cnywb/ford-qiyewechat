@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING" />
+        <setting name="callSettersOnNulls" value="true" />
+        <setting name="lazyLoadingEnabled" value="true" />
+        <setting name="aggressiveLazyLoading" value="false" />
+    </settings>
+
+    <plugins>
+        <!--<plugin interceptor="com.fute.common.util.PagePlugin">
+            <property name="dialect" value="oracle" />
+            <property name="pageSqlId" value=".*ListPage.*" />
+        </plugin>-->
+       <plugin interceptor="com.github.pagehelper.PageHelper">
+
+            <property name="dialect" value="Oracle"/>
+
+            <property name="offsetAsPageNum" value="true"/>
+
+            <property name="rowBoundsWithCount" value="true"/>
+
+            <property name="pageSizeZero" value="true"/>
+
+            <property name="reasonable" value="true"/>
+
+            <property name="params" value="pageNum=start;pageSize=limit;"/>
+
+            <property name="supportMethodsArguments" value="true"/>
+
+            <property name="returnPageInfo" value="check"/>
+        </plugin>
+    </plugins>
+    <mappers>
+
+        <mapper resource="mapper/DtAppMapper.xml" />
+
+        <mapper resource="mapper/DtDepartmentMapper.xml" />
+
+        <mapper resource="mapper/DtRoleFunctionMapper.xml" />
+
+        <mapper resource="mapper/DtMaterialMapper.xml" />
+
+        <mapper resource="mapper/DtMaterialUserMapper.xml" />
+
+        <mapper resource="mapper/DtMessageMapper.xml" />
+
+        <mapper resource="mapper/DtMarkMapper.xml" />
+
+        <mapper resource="mapper/DtAreaMapper.xml" />
+
+        <mapper resource="mapper/DtAnswerMapper.xml" />
+
+        <mapper resource="mapper/DtQuestionMapper.xml" />
+
+        <mapper resource="mapper/DtUserMapper.xml" />
+
+        <mapper resource="mapper/DtFunctionMapper.xml"/>
+
+        <mapper resource="mapper/DtRoleMapper.xml"/>
+
+        <mapper resource="mapper/DtParameterMapper.xml"/>
+
+        <mapper resource="mapper/SystemMapper.xml" />
+
+        <mapper resource="mapper/BasicMapper.xml" />
+
+        <mapper resource="mapper/AreaMapper.xml" />
+
+        <mapper resource="mapper/SystemParameterMapper.xml"/>
+
+        <mapper resource="mapper/DtTaskMapper.xml"/>
+        <!--操作日志-->
+        <mapper resource="mapper/OperationLogMapper.xml"/>
+
+    </mappers>
+</configuration>

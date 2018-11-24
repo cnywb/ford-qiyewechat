@@ -1,0 +1,45 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtRoleMapper">
+
+    <resultMap type="com.ford.qiye.model.DtRole" id="dtRoleResultMap">
+        <result column="ID"  property="id" />
+        <result column="NAME" jdbcType="VARCHAR" property="name" />
+        <result column="STATUS"  property="status" />
+        <result column="CREATETIME" jdbcType="DATE" property="createTime" />
+        <result column="REMARK" jdbcType="VARCHAR" property="remark" />
+    </resultMap>
+
+    <sql id="T_DT_FUNCTION_LIST">
+        ID, PARENTID, NAME, LINKURL, PRJID, STATUS, PRIORITY, CREATETIME, REMARK
+    </sql>
+
+    <select id="queryAll" parameterType="java.lang.String" resultMap="dtRoleResultMap">
+       select * from  T_DT_ROLE
+    </select>
+
+    <select id="findById" parameterType="java.lang.Long"  resultType="com.ford.qiye.model.DtRole">
+       select * from  T_DT_ROLE where ID=#{id}
+    </select>
+
+    <select id="queryByUserId" parameterType="java.lang.String" resultMap="dtRoleResultMap">
+        select DR.* from  T_AS_USERROLE AU,T_DT_ROLE DR WHERE  AU.ROLEID=DR.ID AND AU.USERID=#{userId}
+    </select>
+
+    <update id="update" parameterType="com.ford.qiye.model.DtRole">
+        update T_DT_ROLE
+        <set>
+            <if test="role.name != null and role.name!=''">name=#{role.name},</if>
+            <if test="role.status != null and role.status!=''">status=#{role.status},</if>
+        </set>
+        where ID=#{role.id}
+    </update>
+
+    <insert id="insertUserRole" parameterType="java.util.Map">
+         INSERT INTO T_AS_USERROLE(USERROLEID,USERID,ROLEID,CREATETIME)
+         VALUES (SEQ_T_AS_USERROLE.Nextval,#{userId},#{roleId},sysdate)
+    </insert>
+
+    <delete id="deleteByUserId" parameterType="java.util.Map">
+        DELETE  FROM  T_AS_USERROLE  where USERID=#{userId}
+    </delete>
+</mapper>

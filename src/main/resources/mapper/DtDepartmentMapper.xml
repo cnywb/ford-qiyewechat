@@ -1,0 +1,59 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtDepartmentMapper">
+
+    <resultMap type="com.ford.qiye.model.DtDepartment" id="departmentResult">
+        <id column="DEPARTID"     property="id"/>
+        <result column="DEPARTNAME" property="departName"/>
+        <result column="IFACTIVE"  property="ifActive"/>
+        <result column="PARENTID"    property="parentId"/>
+        <result column="CREATETIME" property="createTime"/>
+    </resultMap>
+
+    <select id="getDepartListAll"  resultMap="departmentResult">
+        select * from t_dt_depart order by DEPARTID desc
+    </select>
+
+
+    <select id="findById"  parameterType="java.util.Map"   resultMap="departmentResult">
+        select * from T_DT_DEPART  where DEPARTID=#{id}
+    </select>
+
+    <select id="findByName"  parameterType="java.util.Map"   resultMap="departmentResult">
+        SELECT * FROM T_DT_DEPART
+        <where>
+            <if test="id !=null and id !=''"> departid!=#{id}</if>
+            <if test="departName !=null and departName !=''"> and departname=#{departName}</if>
+        </where>
+    </select>
+
+    <select id="queryMyDepartList" parameterType="java.util.Map" resultMap="departmentResult">
+        select departid,departname,ifactive,parentid from t_dt_depart
+        <where>
+            <if test="id !=null and id !=0">and departid=#{id}</if>
+            <if test="excludeId !=null and excludeId !=0">and departid!=#{excludeId}</if>
+        </where>
+    </select>
+   <delete id="delete" parameterType="java.util.Map">
+      DELETE  FROM  T_DT_DEPART where departid=#{id}
+   </delete>
+    <insert id="insert" parameterType="com.ford.qiye.model.DtDepartment">
+        <selectKey resultType="java.lang.Long"  order="BEFORE" keyProperty="id">
+            SELECT SEQ_T_DT_DEPART.Nextval as ID from DUAL
+        </selectKey>
+        INSERT INTO T_DT_DEPART(departid,departname,ifactive,parentid,CREATETIME) values(
+          #{id},
+          #{departName},
+          #{ifActive},
+          #{parentId},
+          sysdate
+        )
+    </insert>
+
+    <update id="update" parameterType="java.util.Map">
+        update T_DT_DEPART set
+        <if test="departName!=null and departName != ''">DEPARTNAME=#{departName}</if>
+        <if test="ifActive!=null and ifActive != ''">,IFACTIVE=#{ifActive}</if>
+        <if test="parentId!=null and parentId != ''">,parentid=#{parentId}</if>
+        <where> departid=#{id} </where>
+    </update>
+ </mapper>

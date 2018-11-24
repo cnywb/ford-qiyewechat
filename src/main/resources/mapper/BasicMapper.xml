@@ -1,0 +1,421 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.fute.backer.dao.BasicMapper">
+
+	<select id="getEmployeeList" resultType="java.util.Map" parameterType="java.util.Map">
+		select tdu.id,tdu.username,tdu.realname,tdu.position,tdu.phone,tdu.email,tdu.departid,tdd.departname,tdu.headimage,tdu.sex,tdu.wxnum,tdu.isagency,
+		tdu.areaname,
+		tdu.smallname,
+		tdu.servecode,
+		tdu.sellcode,
+		(select distinct t1.markname as  markname from t_dt_mark t1
+		LEFT JOIN t_as_usermark t2 on t2.markid=t1.markid
+		left join t_dt_user t3 on t3.id=t2.userid
+		where t2.userid=tdu.id
+		) marknames,
+		(select distinct t1.markid as  markname from t_dt_mark t1
+		LEFT JOIN t_as_usermark t2 on t2.markid=t1.markid
+		left join t_dt_user t3 on t3.id=t2.userid
+		where t2.userid=tdu.id
+		) markids,
+		(select distinct t1.name  AS  rolename from t_dt_role t1
+		LEFT JOIN t_as_userrole t2 on t2.roleid=t1.id
+		left join t_dt_user t3 on t3.id=t2.userid
+		where t2.userid=tdu.id
+		) rolenames,
+		(select distinct t1.id AS  roleid from t_dt_role t1
+		LEFT JOIN t_as_userrole t2 on t2.roleid=t1.id
+		left join t_dt_user t3 on t3.id=t2.userid
+		where t2.userid=tdu.id
+		) roleids,
+		(select name from t_dt_area ar where ar.id= tdu.areaname)as bigarname,
+		(select name from t_dt_area ar where ar.id= tdu.smallname)as smareaname
+		from t_dt_user tdu
+		left join t_dt_depart tdd on tdu.departid=tdd.departid
+		LEFT JOIN t_as_usermark tau on tdu.id=tau.userid
+		left join t_dt_mark tdm  on tau.markid=tdm.markid
+		<where>
+			<if test="realname != null and realname != ''">and tdu.realname  like "%"#{realname}"%"</if>
+			<if test="username != null and username != ''">and tdu.username  like "%"#{username}"%"</if>
+			<if test="position != null and position != ''">and tdu.position  like "%"#{position}"%"</if>
+			<if test="email != null and email != ''">and tdu.email  like "%"#{email}"%"</if>
+			<if test="phone != null and phone != ''">and tdu.phone  like "%"#{phone}"%"</if>
+			<if test="departid != '1' and departid != 1 and departid !=null and departid !=''">and tdu.departid=#{departid}</if>
+			<if test="isagency!=null and isagency!= ''">and tdu.isagency=#{isagency}</if>
+			<if test="servecode!=null and servecode!= ''">and tdu.servecode like "%"#{servecode}"%"</if>
+			<if test="sellcode!=null and sellcode!= ''">and tdu.sellcode  like"%"#{sellcode}"%"</if>
+			and tdu.id!=1
+		</where>
+		order by tdu.createTime desc
+	</select>
+	<select id="getEmployeeIdList" resultType="java.util.Map" parameterType="java.util.Map">
+		select tdu.id,
+		(select distinct t1.markname  AS  markname from t_dt_mark t1
+		LEFT JOIN t_as_usermark t2 on t2.markid=t1.markid
+		left join t_dt_user t3 on t3.id=t2.userid
+		where t2.userid=tdu.id
+		) marknames,
+		(select  distinct t1.markid  AS  markname from t_dt_mark t1
+		LEFT JOIN t_as_usermark t2 on t2.markid=t1.markid
+		left join t_dt_user t3 on t3.id=t2.userid
+		where t2.userid=tdu.id
+		) markids,
+		(select distinct t1.name  AS  rolename from t_dt_role t1
+		LEFT JOIN t_as_userrole t2 on t2.roleid=t1.id
+		left join t_dt_user t3 on t3.id=t2.userid
+		where t2.userid=tdu.id
+		) rolenames,
+		(select distinct t1.id  roleid from t_dt_role t1
+		LEFT JOIN t_as_userrole t2 on t2.roleid=t1.id
+		left join t_dt_user t3 on t3.id=t2.userid
+		where t2.userid=tdu.id
+		) roleids,
+		(select name from t_dt_area ar where ar.id= tdu.areaname)as bigarname,
+		(select name from t_dt_area ar where ar.id= tdu.smallname)as smareaname
+		from t_dt_user tdu
+		left join t_dt_depart tdd on tdu.departid=tdd.departid
+		LEFT JOIN t_as_usermark tau on tdu.id=tau.userid
+		left join t_dt_mark tdm  on tau.markid=tdm.markid
+		
+		<where>
+			<if test="realname != null and realname != ''">and tdu.realname  like "%"#{realname}"%"</if>
+			<if test="username != null and username != ''">and tdu.username  like "%"#{username}"%"</if>
+			<if test="position != null and position != ''">and tdu.position  like "%"#{position}"%"</if>
+			<if test="email != null and email != ''">and tdu.email  like "%"#{email}"%"</if>
+			<if test="phone != null and phone != ''">and tdu.phone  like "%"#{phone}"%"</if>
+			<if test="departid != '1' and departid != 1 and departid !=null and departid !=''">and tdu.departid=#{departid}</if>
+			<if test="isagency!=null and isagency!= ''">and tdu.isagency=#{isagency}</if>
+			<if test="servecode!=null and servecode!= ''">and tdu.servecode like "%"#{servecode}"%"</if>
+			<if test="sellcode!=null and sellcode!= ''">and tdu.sellcode  like"%"#{sellcode}"%"</if>
+			and tdu.id!="1"
+		</where>
+		group by tdu.id
+		order by tdu.createTime desc
+  </select>
+   <delete id="deleteUserByUserId" parameterType="java.lang.String"  >
+	  delete from t_dt_user where id=#{_parameter}
+   </delete>
+	<select id="getEmployeeListNum" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(0) from t_dt_user tdu
+		left join t_dt_depart tdd on tdu.departid=tdd.departid
+		<where>
+			<if test="realname != null and realname != ''">and realname  like "%"#{realname}"%"</if>
+			<if test="username != null and username != ''">and username  like "%"#{username}"%"</if>
+			<if test="position != null and position != ''">and position  like "%"#{position}"%"</if>
+			<if test="email != null and email != ''">and email  like "%"#{email}"%"</if>
+			<if test="departid != null and departid != ''">and tdu.departid=#{departid}</if>
+			<if test="isagency!=null and isagency!= ''">and isagency=#{isagency}</if>
+		    <if test="servecode!=null and servecode!= ''">and tdu.servecode="%"#{servecode}"%"</if>
+			<if test="sellcode!=null and sellcode!= ''">and tdu.sellcode="%"#{sellcode}"%"</if>
+		</where>
+	</select>
+	<select id="getDepartListAll"  resultType="java.util.Map">
+		select departid,departname,ifactive,parentid from t_dt_depart order by departid desc
+	</select>
+	<select id="getMyDepartList" parameterType="java.util.Map" resultType="java.util.Map">
+		select departid,departname,ifactive,parentid from t_dt_depart
+		<where>
+			<if test="departid !='0' and departid !=0">and departid=#{departid}</if>
+			and departid!=0
+		</where>
+	</select>
+	<insert id="insertEmployee"   parameterType="java.util.Map">
+		insert into t_dt_user(
+		id,
+		username,
+		realname,
+		password,
+		position,phone,
+		email,
+		departid,
+		headimage,
+		sex,
+		wxnum,
+		isagency,
+		areaname,
+		smallname,
+		servecode,
+		sellcode,
+		createTime
+		)
+		values(
+		#{id},
+		#{username},
+		#{realname},
+		#{password},
+		#{position},
+		#{phone},
+		#{email},
+		#{departid},
+		#{headimage},
+		#{sex},
+		#{wxnum},
+		#{isagency},
+		#{areaname},
+		#{smallname},
+		#{servecode},
+		#{sellcode},
+		now()
+		)
+		
+	</insert>
+	<update id="updateEmployee" parameterType="java.util.Map">
+		update t_dt_user
+		<set>
+			<if test="username != null and username != ''">username =#{username},</if>
+			<if test="realname != null and realname != ''">realname =#{realname},</if>
+			<if test="position != null and position != ''">position =#{position},</if>
+			<if test="phone != null and phone != ''">phone =#{phone},</if>
+			<if test="email != null and email != ''">email =#{email},</if>
+			<if test="headimage != null and headimage != ''">headimage =#{headimage},</if>
+			<if test="email != null and email != ''">sex =#{sex},</if>
+			<if test="departid != null and departid != ''">departid =#{departid},</if>
+			<if test="wxnum != null and wxnum != ''">wxnum =#{wxnum},</if>
+			<if test="areaname != null and areaname != ''">areaname =#{areaname},</if>
+			<if test="smallname != null and smallname != ''">smallname =#{smallname},</if>
+			<if test="servecode != null and servecode != ''">servecode =#{servecode},</if>
+			<if test="sellcode != null and sellcode != ''">sellcode =#{sellcode},</if>
+			
+		</set>
+		where id=#{id}
+	</update>
+	<select id="deleteEmployee" parameterType="java.util.Map">
+		delete from t_dt_user where id=#{id}
+	</select>
+	<select id="getMarkList" resultType="java.util.Map" parameterType="java.util.Map">
+		select markid,markname,ifactive from t_dt_mark
+		<where>
+			<if test="markname !=null and markname !=''">and markname like "%"#{markname}"%"</if>
+			<if test="markid !=null and markid !=''">and markid=#{markid}</if>
+		</where>
+	</select>
+	<select id="getMarkListNum" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(0) from t_dt_mark
+		<where>
+			<if test="markname !=null and markname !=''">and markname like "%"#{markname}"%"</if>
+			<if test="markid !=null and markid !=''">and markid=#{markid}</if>
+		</where>
+	</select>
+	<insert id="insertMark" parameterType="java.util.Map">
+		insert into t_dt_mark(markid,markname,ifactive)
+		values(#{tagid},#{markname},#{ifactive})
+	</insert>
+	<update id="updateMark"  parameterType="java.util.Map">
+		update t_dt_mark 
+		<set>
+			<if test="markname !=null and markname !=''">markname =#{markname},</if>
+		</set>
+		where markid=#{markid}
+	</update>
+	<delete id="deleteMark"  parameterType="java.util.Map">
+		delete from t_dt_mark where markid=#{markid}
+	</delete>
+	<select id="getMessageList" resultType="java.util.Map" parameterType="java.util.Map">
+	select tdu.position,tdu.sellcode,tdu.servecode,tdu.areaname,tda.name as smallname,tdu.id,tdu.realname,
+	tdu.headimage,tbm.status,tbm.messageid,tbm.userid,tbm.content,tbm.imagecontent,tbm.contenttype,tbm.createtime
+	,tdi.title as title1,tdi.content as content1,tdi.image as image1,tdi.author,tdi.url,tdi.appendix
+	from t_bi_message tbm
+	left join t_dt_user tdu on tbm.userid=tdu.id
+	left join t_dt_area tda on tdu.smallname=tda.id
+	left join t_dt_imagecontent tdi on tbm.imagecontent=tdi.imagecontentid
+	<where>
+		<if test="status !=null and status !=''">and tbm.status=#{status}</if>
+		<if test="messageid !=null and messageid !=''">and messageid=#{messageid}</if>
+		<if test="null!= startDate and ''!= startDate">
+			and createtime &gt;= #{startDate}
+		</if>
+		<if test="null!= endDate and ''!= endDate">
+			and createtime &lt;= #{endDate}
+		</if>
+		<if test="realname !=null and realname !=''">and tdu.realname=#{realname}</if>
+	</where>
+	order by tbm.createtime desc
+</select>
+	<select id="getMessageListNum" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(0) from t_bi_message
+		<where>
+			<if test="content !=null and content !=''">and content like "%"#{content}"%"</if>
+			<if test="null!= startDate and ''!= startDate">
+				and createtime &gt;= #{startDate}
+			</if>
+			<if test="null!= endDate and ''!= endDate">
+				and createtime &lt;= #{endDate}
+			</if> 
+			<if test="messageid !=null and messageid !=''">and messageid=#{messageid}</if>
+		</where>
+	</select>
+	<insert id="sendMessage" parameterType="java.util.Map">
+		insert into t_bi_message(content,createtime,userid,status,contenttype,imagecontent)
+		values(#{content},now(),#{employeeid},"1",#{contenttype},#{imagecontent})
+	</insert>
+	<delete id="deleteMessage" parameterType="java.util.Map">
+		delete from t_bi_message where messageid=#{messageid}
+	</delete>
+	<select id="getMarkListAll" resultType="java.util.Map">
+		select markid,markname,ifactive from  t_dt_mark 
+	</select>
+	<delete id="deleteUserMark" parameterType="java.util.Map">
+		delete from t_as_usermark
+		<where>
+			<if test="null!= id and ''!= id"> and userid=#{id} </if>
+			<if test="list != null">
+			<foreach collection="list" item="item" open="AND markid IN(" separator="," close=")">
+				#{item.markid}
+			</foreach>
+			</if>
+			<if test="null!= usermarkid and ''!= usermarkid"> and usermarkid=#{usermarkid} </if>
+		</where>
+	</delete>
+	<delete id="deleteUserRole" parameterType="java.util.Map">
+		delete from t_as_userrole
+		<where>
+			<if test="null!= id and ''!= id"> and userid=#{id} </if>
+			<if test="list != null">
+			<foreach collection="list" item="item" open="AND roleid IN(" separator="," close=")">
+				#{item.roleid}
+			</foreach>
+			</if>
+			<if test="null!= userroleid and ''!= userroleid"> and userroleid=#{userroleid} </if>
+		</where>
+	</delete>
+	<insert id="saveUserMark"  parameterType="java.util.Map">
+		insert into t_as_usermark(userid,markid)
+		values
+		<foreach collection="userMarkList" item="item" index="index"
+			separator=",">
+			(#{item.id},#{item.markid})
+		</foreach>
+	</insert>
+	<insert id="saveUserRole"  parameterType="java.util.Map">
+		insert into t_as_userrole(userid,roleid,createtime)
+		values
+		<foreach collection="userRoleList" item="item" index="index"
+			separator=",">
+			(#{item.id},#{item.roleid},now())
+		</foreach>
+	</insert>
+	<select id="getDepartListByparentid" parameterType="java.util.Map" resultType="java.util.Map">
+		select departid,departname,ifactive,parentid from t_dt_depart where parentid=#{departid}
+	</select>
+	<select id="getEmployeelistBydepartid" parameterType="java.util.Map" resultType="java.util.Map">
+		select tdu.id as userid,tdu.realname from t_dt_user tdu
+		left join t_dt_depart tdd on tdu.departid=tdd.departid
+		left join t_as_usermark tau on tdu.id=tau.userid 
+		left join t_dt_mark tdm on  tau.markid=tdm.markid
+		<where>
+			<if test="departid !=null and departid != ''">and tdd.departid=#{departid}</if>
+			<if test="position !=null and position != ''">and tdu.position=#{position}</if>
+			<if test="areaname !=null and areaname != ''">and tdu.areaname=#{areaname}</if>
+			<if test="smallname !=null and smallname != ''">and tdu.smallname=#{smallname}</if>
+			<if test="servecode !=null and servecode != ''">and tdu.servecode=#{servecode}</if>
+			<if test="sellcode !=null and sellcode != ''">and tdu.sellcode=#{sellcode}</if>
+			<if test="markid !=null and markid != ''">and tau.markid=#{markid}</if>
+		</where>
+		GROUP BY tdu.id
+	</select>
+	<select id="getEmployeeMarkByDepartid" parameterType="java.util.Map" resultType="java.util.Map">
+		select tdu.id as userid,tdu.realname,tdm.markid,tdm.markname from t_dt_user tdu
+		left join t_dt_depart tdd on tdu.departid=tdd.departid
+		LEFT JOIN t_as_usermark tau on tdu.id=tau.userid
+		left join t_dt_mark tdm on tau.markid=tdm.markid
+		where tdd.departid=#{departid}
+	</select>
+	<insert id="insertImageContent"  parameterType="java.util.Map">
+		insert into t_dt_imagecontent(title,content,image,author,url,appendix,createtime)
+		values(#{title},#{imagecontent},#{image},#{author},#{url},#{appendix},#{createtime})
+	</insert>
+	<select id="getImageContentId" parameterType="java.util.Map" resultType="java.lang.String">
+		select imagecontentid from t_dt_imagecontent where createtime=#{createtime}
+	</select>
+	<select id="getMarkListByUserid" parameterType="java.util.Map" resultType="java.util.Map">
+		select tdm.markid,tdm.markname from  t_dt_mark tdm
+		left join t_as_usermark tau on tdm.markid=tau.markid
+		LEFT JOIN t_dt_user  tdu on tau.userid=tdu.id
+		<where>
+			<if test="null!= userid and ''!= userid"> and tdu.id=#{userid} </if>
+		</where>
+		group by tdm.markid
+	</select>
+	<delete id="deleteDepart" parameterType="java.util.Map" >
+		delete from t_dt_depart where departid=#{departid}
+	</delete>
+	<update id="updateDepart" parameterType="java.util.Map" >
+		update  t_dt_depart
+		<set>
+			<if test="departname != null and  departname!= ''">departname=#{departname},</if>
+			<if test="parentid != null and  parentid!= ''">parentid=#{parentid},</if>
+			<if test="ifactive != null and  ifactive != ''">ifactive=#{ifactive},</if>
+		</set>
+		 where departid=#{departid}
+	</update>
+	<insert id="insertDepart" parameterType="java.util.Map" >
+		insert into t_dt_depart(departid,departname,parentid,ifactive,createtime)
+		values(#{id},#{departname},#{departId},#{ifactive},#{createtime})
+	</insert>
+	<select id="getDepartId" parameterType="java.util.Map" resultType="java.lang.String">
+		select departid from t_dt_depart where createtime=#{createtime}
+	</select>
+	<select id="getRoleListAll" parameterType="java.util.Map" resultType="java.util.Map">
+		select id roleid,name rolename ,status from t_dt_role 
+		<!-- <where>
+		  <if test="roleid!=null and roleid!= '' ">id &gt; #{roleid}</if>
+		</where> -->
+	</select>
+	<select id="getAppList"  parameterType="java.util.Map"  resultType="java.util.Map">
+		select tda.appid,tda.appname,tda.appimg,tda.linkurl,tdd.departid,tdd.departname
+		from t_dt_app tda 
+		left join t_dt_depart tdd on tda.departid=tdd.departid
+		<where>
+			<if test="appname != null and appname != ''">and tda.appname like "%"#{appname}"%"</if>
+			<if test="departid != null and departid != ''">and tdd.departid=#{departid}</if>
+		</where>
+	</select>
+	<select id="getAppListNum" resultType="java.lang.Integer" parameterType="java.util.Map">
+		select count(0) from t_dt_app tda 
+		left join t_dt_depart tdd on tda.departid=tdd.departid
+		<where>
+			<if test="appname != null and appname != ''">and tda.appname like "%"#{appname}"%"</if>
+			<if test="departid != null and departid != ''">and tdd.departid=#{departid}</if>
+		</where>
+	</select>
+	<insert id="insertApp" parameterType="java.util.Map">
+		insert into t_dt_app(appname,linkurl,appimg,departid)
+		values(#{appname},#{linkurl},#{appimg},#{departid})
+	</insert>
+	<update id="updateApp" parameterType="java.util.Map" >
+		update t_dt_app
+		<set>
+			<if test="appname != null and appname != ''">appname=#{appname},</if>
+			<if test="linkurl != null and linkurl != ''">linkurl=#{linkurl},</if>
+			<if test="appimg != null and appimg != ''">appimg=#{appimg},</if>
+		</set>
+		 where appid=#{appid}
+	</update>
+	<delete id="deleteApp" parameterType="java.util.Map" >
+		delete from t_dt_app where appid=#{appid}
+	</delete>
+	<select id="getEmployeeListAll" resultType="java.util.Map">
+	    select id,realname from t_dt_user
+	</select>
+	<select id="getDepartIdByUserid" parameterType="java.util.Map" resultType="java.util.Map">
+		select departid from t_dt_user where id=#{userid}
+	</select>
+	<select id="getAppidByDepartid" parameterType="java.util.Map" resultType="java.util.Map">
+		SELECT QIYEAPPID FROM T_DT_APP WHERE DEPARTID=#{DEPARTID}
+	</select>
+	<select id="getDepartInfo" parameterType="java.util.Map" resultType="java.util.Map">
+		select departname,departid from t_dt_depart where departname=#{departname}
+	</select>
+	<insert id="insertMessage"  parameterType="java.util.Map" >
+		insert into t_bi_message(content,createtime,userid,status,contenttype)
+		values(#{content},#{createtime},#{userid},#{status},#{contenttype})
+	</insert>
+	<select id="getEmployee" parameterType="java.util.Map" resultType="java.util.Map">
+		select * from t_dt_user
+		<where>
+			<if test="phone != null and phone != ''">and phone=#{phone}</if>
+		</where>
+	</select>
+	<select id="getMaterUser"  parameterType="java.util.Map" resultType="java.util.Map">
+		select * from  t_as_materuser where materid=#{materid} and  userid=#{id} and isdownload="1"
+	</select>
+</mapper>

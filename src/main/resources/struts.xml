@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.objectFactory" value="spring" />
+	<!--
+		指定action交给spring处理
+	-->
+	<constant name="struts.multipart.maxSize" value="100000000" />
+	<include file="struts-default.xml" />
+	<include file="config/struts/struts-plugin.xml" />
+	<include file="config/struts/struts-valid.xml" />
+	<include file="config/struts/struts-manage.xml" />
+	<!-- 微信建设开始 -->
+	<include file="config/struts/struts-backer.xml" />
+	<include file="config/struts/struts-battery.xml" />
+	<include file="config/struts/struts-activity.xml" />
+	<include file="config/struts/struts-wxinterface.xml" />
+	<constant name="struts.multipart.maxSize" value="5242880" />
+</struts>
+

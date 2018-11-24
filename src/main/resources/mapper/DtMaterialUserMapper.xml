@@ -1,0 +1,25 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtMaterialUserMapper">
+    <resultMap type="com.ford.qiye.model.DtMaterialUser" id="materialUserResultMap">
+        <result column="MATERUSERID" jdbcType="DECIMAL" property="id" />
+        <result column="MATERID" jdbcType="DECIMAL" property="materialId" />
+        <result column="USERID" jdbcType="VARCHAR" property="userId" />
+        <result column="CREATETIME" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="ISDOWNLOAD" jdbcType="DECIMAL" property="isDownload" />
+    </resultMap>
+
+    <select id="findById"  parameterType="java.util.Map" resultMap="materialUserResultMap">
+         select * from  T_AS_MATERUSER where MATERID=#{materialId} and  USERID=#{userId} and ISDOWNLOAD="1"
+    </select>
+
+    <select id="findByUserId"  parameterType="java.util.Map" resultMap="materialUserResultMap">
+        select * from  T_AS_MATERUSER where MATERID=#{materialId} and  USERID=#{userId}
+    </select>
+
+    <insert id="insert" parameterType="com.ford.qiye.model.DtMaterialUser">
+        <selectKey resultType="java.lang.Long"  order="BEFORE" keyProperty="id">
+            SELECT SEQ_T_AS_MATERUSER.Nextval as ID from DUAL
+        </selectKey>
+        INSERT INTO T_AS_MATERUSER(MATERUSERID,MATERID,USERID,CREATETIME,ISDOWNLOAD) VALUES(#{id},#{materialId},#{userId},sysdate,#{isDownload})
+    </insert>
+</mapper>

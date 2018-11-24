@@ -1,0 +1,53 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtTaskMapper">
+
+    <resultMap type="com.ford.qiye.model.DtTask" id="taskResult">
+        <id column="ID" jdbcType="DECIMAL" property="id"/>
+        <result column="TASK_STATUS"    property="status"/>
+        <result column="PARAMS"  jdbcType="VARCHAR"  property="params"/>
+        <result column="REMARK"  jdbcType="VARCHAR" property="remark"/>
+        <result column="BUSINESS_ID" jdbcType="DECIMAL"  property="businessId"/>
+        <result column="CREATED_DATE" jdbcType="TIMESTAMP" property="createdDate"/>
+        <result column="UPDATED_DATE" jdbcType="TIMESTAMP" property="updatedDate"/>
+        <result column="BATCH_NO"     jdbcType="VARCHAR" property="batchNo"/>
+        <result column="DATA_TYPE"    jdbcType="VARCHAR" property="dataType"/>
+    </resultMap>
+
+    <insert id="insert" parameterType="com.ford.qiye.model.DtTask">
+        <selectKey resultType="java.lang.Long"  order="BEFORE" keyProperty="id">
+            SELECT SEQ_T_BATCH_TASK.Nextval as ID from DUAL
+        </selectKey>
+        insert into T_BATCH_TASK(ID,TASK_STATUS,PARAMS,REMARK,BUSINESS_ID,CREATED_DATE,UPDATED_DATE,BATCH_NO,DATA_TYPE)
+        values(
+        #{id},
+        #{status,jdbcType=DECIMAL},
+        #{params,jdbcType=VARCHAR},
+        #{remark,jdbcType=VARCHAR},
+        #{businessId,jdbcType=DECIMAL},
+        sysdate,
+        sysdate,
+        #{batchNo,jdbcType=VARCHAR},
+        #{dataType,jdbcType=VARCHAR}
+        )
+    </insert>
+
+    <select id="queryList" resultMap="taskResult" parameterType="java.util.Map">
+        select * from T_BATCH_TASK
+        <where>
+            <if test="status !=null and status !=''">and TASK_STATUS=#{status}</if>
+            <if test="batchNo !=null and batchNo !=''">and BATCH_NO=#{batchNo}</if>
+            <if test="dataType !=null and dataType !=''">and DATA_TYPE=#{dataType}</if>
+        </where>
+    </select>
+
+
+    <update id="updateById"  parameterType="java.util.Map">
+        update T_BATCH_TASK set
+        <if test="status!=null and status != ''"> TASK_STATUS=#{status}</if>
+        <if test="batchNo!=null and batchNo != ''">,BATCH_NO=#{batchNo}</if>
+        <if test="updatedDate!=null and updatedDate != ''">,UPDATED_DATE=#{updatedDate}</if>
+        <where>
+            ID=#{id}
+        </where>
+    </update>
+</mapper>

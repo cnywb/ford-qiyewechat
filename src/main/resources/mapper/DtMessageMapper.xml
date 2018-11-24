@@ -1,0 +1,72 @@
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.ford.qiye.dao.DtMessageMapper">
+
+    <resultMap type="com.ford.qiye.model.DtMessage" id="messageResultMap">
+        <result column="MESSAGEID" jdbcType="DECIMAL" property="id" />
+        <result column="CONTENT" jdbcType="VARCHAR" property="content" />
+        <result column="USERID" jdbcType="VARCHAR" property="userId" />
+        <result column="CREATETIME" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="STATUS"   jdbcType="DECIMAL"  property="status" />
+        <result column="CONTENTTYPE" jdbcType="DECIMAL" property="contentType" />
+        <result column="POSITION"  jdbcType="VARCHAR"  property="position" />
+        <result column="SELLCODE"  jdbcType="VARCHAR" property="sellCode" />
+        <result column="SERVECODE" jdbcType="VARCHAR" property="serveCode"/>
+        <result column="AREANAME"  jdbcType="VARCHAR" property="areaName"/>
+        <result column="SMALLNAME" jdbcType="VARCHAR"  property="smallName"/>
+        <result column="REALNAME"  jdbcType="VARCHAR" property="realName"/>
+        <result column="HEADIMAGE" jdbcType="VARCHAR" property="headImage"/>
+        <result column="TITLE"     jdbcType="VARCHAR"  property="imageTitle"/>
+    </resultMap>
+
+    <select id="queryPage" resultMap="messageResultMap" parameterType="java.util.Map">
+        SELECT TBM.MESSAGEID,
+        TBM.CONTENT,
+        TBM.USERID,
+        TBM.CREATETIME,
+        TBM.CONTENTTYPE,
+        TBM.STATUS,
+        TDI.TITLE,
+        TDU.POSITION,
+        TDU.SELLCODE,
+        TDU.SERVECODE,
+        BGTDA.NAME AS  AREANAME,
+        TDA.NAME AS SMALLNAME,
+        TDU.REALNAME,
+        TDU.HEADIMAGE
+        FROM T_BI_MESSAGE TBM
+        LEFT JOIN T_DT_USER TDU ON TBM.USERID=TDU.ID
+        LEFT JOIN T_DT_AREA BGTDA ON TDU.AREANAME=BGTDA.ID
+        LEFT JOIN T_DT_AREA TDA ON TDU.SMALLNAME=TDA.ID
+        LEFT JOIN T_DT_IMAGECONTENT TDI ON TBM.IMAGECONTENT=TDI.IMAGECONTENTID
+        <where>
+            <if test="status !=null and status !=''">and tbm.status=#{status}</if>
+            <if test="id !=null and id !=''">and messageid=#{id}</if>
+            <if test="null!= startDate and ''!= startDate">
+                and  tbm.createtime &gt;= #{startDate}
+            </if>
+            <if test="null!= endDate and ''!= endDate">
+                and tbm.createtime &lt;= #{endDate}
+            </if>
+            <if test="realName !=null and realName !=''">and tdu.realName=#{realName}</if>
+        </where>
+        order by tbm.createtime desc
+    </select>
+
+    <insert id="insert" parameterType="com.ford.qiye.model.DtMessage">
+        <selectKey resultType="java.lang.Long"  order="BEFORE" keyProperty="id">
+            SELECT SEQ_T_BI_MESSAGE.Nextval as ID from DUAL
+        </selectKey>
+        insert into T_BI_MESSAGE(MESSAGEID,CONTENT,CREATETIME,USERID,STATUS,CONTENTTYPE,IMAGECONTENT)
+        values(
+        #{id},
+        #{content,jdbcType=VARCHAR},
+        sysdate,#{userId,jdbcType=VARCHAR},
+        #{status,jdbcType=DECIMAL},
+        #{contentType,jdbcType=DECIMAL},
+        #{imageId,jdbcType=DECIMAL}
+        )
+    </insert>
+    <delete id="delete" parameterType="java.util.Map">
+        delete from t_bi_message where messageid=#{id}
+    </delete>
+</mapper>

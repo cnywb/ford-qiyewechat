@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.0//EN"
+        "http://struts.apache.org/dtds/struts-2.0.dtd">
+<struts>
+	<constant name="struts.devMode" value="false" />
+	<constant name="struts.url.includeParams" value="none" />
+
+	<package name="wx" namespace="/" extends="app-default">
+		<action name=""></action>
+		<action name="uploadimg" class="uploadimgBean">
+			<result name="showImg">
+				/pages/battery/showImg.jsp
+			</result>
+			<result name="showImgMulti">
+				/pages/upload/showImgMulti.jsp
+			</result>
+			<result name="showImg2">
+				/pages/battery/showImg2.jsp
+			</result>
+		</action>
+	</package>
+</struts>
